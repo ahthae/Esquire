@@ -2,8 +2,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:esquire.Views"
+             xmlns:viewModels="clr-namespace:esquire.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="esquire.Views.AnalysisModeView">
+	<Design.DataContext>
+		<viewModels:AnalysisModeViewModel />
+	</Design.DataContext>
+	
 	<TabControl>
 		<TabItem Header="Foundation">
 			
@@ -21,11 +27,15 @@
 				</SplitView.Pane>
 
 				<Grid>
-					<DataGrid Name="{Binding TreeViewItem.Header}" 
-					          AutoGenerateColumns="True"
-					          Items="{Binding BusinessUnits}"/>
+					<Panel DataContext="{Binding DataVm}">
+						<Design.DataContext>
+							<viewModels:AnalysisModeDataViewModel />
+						</Design.DataContext>
+						
+						<DataGrid AutoGenerateColumns="True"
+								  Items="{Binding Data}"/>
+					</Panel>
 				</Grid>
-				
 			</SplitView>
 		</TabItem>
 	</TabControl>

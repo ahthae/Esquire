@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using Avalonia.Logging;
 
 namespace esquire;
 
@@ -16,5 +17,5 @@ class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .LogToTrace();
+            .LogToTrace(LogEventLevel.Debug);
 }

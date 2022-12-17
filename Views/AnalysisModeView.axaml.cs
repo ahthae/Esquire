@@ -1,5 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using esquire.ViewModels;
 
 namespace esquire.Views
 {
@@ -12,7 +15,7 @@ namespace esquire.Views
 
         private void InputElement_OnDoubleTapped(object? sender, RoutedEventArgs e)
         {
-            
+            WeakReferenceMessenger.Default.Send(new ValueChangedMessage<string>(((TreeViewItem)sender).Header.ToString()));
         }
     }
 }

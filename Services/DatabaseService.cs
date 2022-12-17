@@ -5,13 +5,13 @@ using System.Data.Common;
 
 namespace esquire.Services
 {
-    public abstract class DatabaseService
+    public abstract class DatabaseService : IDatabaseService
     {
         public DbProviderFactory Factory { get; init; }
         protected DbConnection connection { get; set; }
         protected DbDataAdapter adapter { get; set; }
 
-        public abstract void Query(List<BusinessUnit> list);
+        public abstract void Query<T>(List<T> list) where T : BusinessUnit;
         
         protected DbDataReader getQueryReader(string query)
         {
@@ -35,7 +35,7 @@ namespace esquire.Services
             return null;
         }
         
-        protected struct SQLQueries
+        protected struct SqlQueries
         {
             public const string businessUnits = @"SELECT
            fabuv.BU_ID                 ""Business Unit ID."",

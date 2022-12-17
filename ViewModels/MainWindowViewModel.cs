@@ -4,16 +4,16 @@ namespace esquire.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private ViewModelBase data;
+    private ViewModelBase page;
 
     public MainWindowViewModel()
     {
-        this.Data = new AnalysisModeViewModel(new OralceService());
+        this.Page = new AnalysisModeViewModel(new OralceService());
     }
 
-    public ViewModelBase Data 
+    public ViewModelBase Page
     {
-        get => data;
-        set => SetProperty(ref data, value);
+        get => page;
+        set => SetProperty(ref page, value);
     }
 }

@@ -7,5 +7,8 @@
         x:Class="esquire.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="esquire"
-		Content="{Binding Data}">
+		Content="{Binding Page}">
+	<Design.DataContext>
+		<vm:MainWindowViewModel />
+	</Design.DataContext>
 </Window>

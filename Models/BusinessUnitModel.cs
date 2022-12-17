@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace esquire.Models
 {
-    public sealed record BusinessUnit(double? BU_ID,
+    public record BusinessUnit(double? BU_ID,
         string? BU_NAME,
         double? LOCATION_ID,
         double? BUSINESS_GROUP_ID,
