@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="esquire.Views.AnalysisModeView">
+	<TabControl>
+		<TabItem Header="Foundation">
+			
+			<SplitView IsPaneOpen="True"
+					   DisplayMode="Inline">
+				<SplitView.Pane>
+					<TreeView>
+						<TreeViewItem Header="Foundational Analysis">
+							<TreeViewItem Header="Business Units">
+								<TreeViewItem Header="Business Units" DoubleTapped="InputElement_OnDoubleTapped"/>
+								<TreeViewItem Header="Business Unit Organizations"/>
+							</TreeViewItem>
+						</TreeViewItem>
+					</TreeView>
+				</SplitView.Pane>
+
+				<Grid>
+					<DataGrid Name="{Binding TreeViewItem.Header}" 
+					          AutoGenerateColumns="True"
+					          Items="{Binding BusinessUnits}"/>
+				</Grid>
+				
+			</SplitView>
+		</TabItem>
+	</TabControl>
+</UserControl>
