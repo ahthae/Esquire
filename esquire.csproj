@@ -36,4 +36,9 @@
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.80" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data" />
+    <Folder Include="Models\Generated" />
+  </ItemGroup>
 </Project>
