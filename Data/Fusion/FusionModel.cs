@@ -6,13 +6,13 @@ using esquire.Models.Fusion;
 
 namespace esquire.Data.Fusion
 {
-    public partial class ModelContext : DbContext
+    public partial class FusionContext : DbContext
     {
-        public ModelContext()
+        public FusionContext()
         {
         }
 
-        public ModelContext(DbContextOptions<ModelContext> options)
+        public FusionContext(DbContextOptions<FusionContext> options)
             : base(options)
         {
         }
