@@ -44,7 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data" />
     <Folder Include="Models\Generated" />
   </ItemGroup>
 </Project>

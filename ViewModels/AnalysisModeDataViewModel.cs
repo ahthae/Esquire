@@ -1,27 +1,28 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Linq;
+using System.Reactive.Linq;
+using esquire.Data.Fusion;
 using esquire.Models;
-using esquire.Services;
+using esquire.Models.Fusion;
+using Microsoft.EntityFrameworkCore;
 
 namespace esquire.ViewModels;
 
 public class AnalysisModeDataViewModel : ViewModelBase
 {
-    private ObservableCollection<BusinessUnit> data;
+    private ObservableCollection<FunAllBusinessUnitsV> data;
 
     public AnalysisModeDataViewModel()
     {
-        data = new ObservableCollection<BusinessUnit>();
+        data = new ObservableCollection<FunAllBusinessUnitsV>();
     }
-    public AnalysisModeDataViewModel(IDatabaseService db)
+    public AnalysisModeDataViewModel(FusionContext db)
     {
-        var list = new List<BusinessUnit>();
-        db.Query(list);
-        Data = new ObservableCollection<BusinessUnit>(list);
+        DbContext context = new FusionContext();
+        data = new ObservableCollection<FunAllBusinessUnitsV>(db.FunAllBusinessUnitsVs.ToArray());
     }
 
-    public ObservableCollection<BusinessUnit> Data
+    public ObservableCollection<FunAllBusinessUnitsV> Data
     {
         get => data;
         set => SetProperty(ref data, value);
