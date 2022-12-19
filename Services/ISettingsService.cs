@@ -1,18 +1,15 @@
-using System.Data.Common;
-using Microsoft.Extensions.Configuration;
-
 namespace esquire.Services;
 
 public interface ISettingsService
 {
-    public AppSettings Settings { get; set; }
+    public IOptions Settings { get; set; }
     
-    public class AppSettings
+    public interface IOptions
     {
         public enum DatabaseProvider
         {
             Oracle
         }
-        public DatabaseProvider Database { get; set; }
+        public DatabaseProvider DbProvider { get; set; }
     }
 }

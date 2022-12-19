@@ -8,7 +8,7 @@ public class SettingsService : ObservableObject, ISettingsService
 {
     private const string ConfigDirectory = "Config";
     private const string ConfigurationFile = "appsettings.json";
-    private ISettingsService.AppSettings _settings;
+    private ISettingsService.IOptions _settings;
     private IConfiguration _config;
 
     public SettingsService()
@@ -16,10 +16,21 @@ public class SettingsService : ObservableObject, ISettingsService
         _config = new ConfigurationBuilder()
             .AddJsonFile(GetConfigPath())
             .Build();
-        Settings = _config.Get<ISettingsService.AppSettings>();
+        Settings = _config.Get<Options>();
     }
     
-    public ISettingsService.AppSettings Settings 
+    public class Options : ObservableObject, ISettingsService.IOptions
+    {
+        private ISettingsService.IOptions.DatabaseProvider _dbProvider;
+        
+        public ISettingsService.IOptions.DatabaseProvider DbProvider 
+        {
+            get => _dbProvider;
+            set => SetProperty(ref _dbProvider, value);
+        }
+    }
+    
+    public ISettingsService.IOptions Settings 
     { 
         get => _settings;
         set => SetProperty(ref _settings, value); 
