@@ -1,8 +1,5 @@
 ﻿using System;
 using esquire.Data.Fusion;
-using esquire.Services;
-using esquire.Services.Settings;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.ViewModels;

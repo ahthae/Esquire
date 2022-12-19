@@ -42,7 +42,6 @@ public partial class App : Application
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddScoped<IDatabaseService, DatabaseService>();
         services.AddDbContext<FusionContext>((serviceProvider, options) => {
-            Options settings = serviceProvider.GetService<ISettingsService>().Settings;
             IDatabaseService db = serviceProvider.GetService<IDatabaseService>();
             DbConnection connection = db.GetConnection();
             Console.WriteLine(connection.ConnectionString);

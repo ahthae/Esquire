@@ -9,6 +9,6 @@
         Title="esquire"
 		Content="{Binding Page}">
 	<Design.DataContext>
-		<vm:MainWindowViewModel />
+		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 </Window>

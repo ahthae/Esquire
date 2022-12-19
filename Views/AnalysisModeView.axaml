@@ -7,7 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="esquire.Views.AnalysisModeView">
 	<Design.DataContext>
-		<viewModels:AnalysisModeViewModel />
+		<viewModels:AnalysisModeViewModel/>
 	</Design.DataContext>
 	
 	<TabControl>
@@ -27,10 +27,7 @@
 				</SplitView.Pane>
 
 				<Grid>
-					<Panel DataContext="{Binding DataVm}">
-						<Design.DataContext>
-							<viewModels:AnalysisModeDataViewModel />
-						</Design.DataContext>
+					<Panel >
 						
 						<DataGrid AutoGenerateColumns="True"
 								  Items="{Binding Data}"/>
