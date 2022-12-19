@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using esquire.Services.Settings;
 
 namespace esquire.Services
 {
     public abstract class DatabaseService : IDatabaseService
     {
         public DbProviderFactory Factory { get; init; }
-        protected DbConnection connection { get; set; }
+        public DbConnection connection { get; set; }
         protected DbDataAdapter adapter { get; set; }
 
         public abstract void Query<T>(List<T> list) where T : BusinessUnit;

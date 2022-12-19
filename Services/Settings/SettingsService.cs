@@ -2,35 +2,23 @@ using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Configuration;
 
-namespace esquire.Services;
+namespace esquire.Services.Settings;
 
 public class SettingsService : ObservableObject, ISettingsService
 {
     private const string ConfigDirectory = "Config";
     private const string ConfigurationFile = "appsettings.json";
-    private ISettingsService.IOptions _settings;
-    private IConfiguration _config;
+    private Options _settings;
 
     public SettingsService()
     {
-        _config = new ConfigurationBuilder()
+        IConfiguration config = new ConfigurationBuilder()
             .AddJsonFile(GetConfigPath())
             .Build();
-        Settings = _config.Get<Options>();
+        Settings = config.Get<Options>();
     }
     
-    public class Options : ObservableObject, ISettingsService.IOptions
-    {
-        private ISettingsService.IOptions.DatabaseProvider _dbProvider;
-        
-        public ISettingsService.IOptions.DatabaseProvider DbProvider 
-        {
-            get => _dbProvider;
-            set => SetProperty(ref _dbProvider, value);
-        }
-    }
-    
-    public ISettingsService.IOptions Settings 
+    public Options Settings 
     { 
         get => _settings;
         set => SetProperty(ref _settings, value); 

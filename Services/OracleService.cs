@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Common;
 using esquire.Models;
+using esquire.Services.Settings;
 using Oracle.ManagedDataAccess.Client;
 
 namespace esquire.Services
 {
     public class OralceService : DatabaseService
     {
-        public OralceService()
+        public OralceService(ISettingsService settings)
         {
             Factory = DbProviderFactories.GetFactory(new OracleConnection());
             DbConnectionStringBuilder connectionStringBuilder = Factory.CreateConnectionStringBuilder();
             connection = Factory.CreateConnection();
-            
-            connectionStringBuilder.Add("User Id", "SYSTEM");
+
+            Options options = settings.Settings;
+            connectionStringBuilder.Add("User Id", settings.Settings.Database.Provider);
             connectionStringBuilder.Add("Password", "<password>");
             connectionStringBuilder.Add("Data Source", "localhost/XEPDB1");
             connection.ConnectionString = connectionStringBuilder.ToString();
