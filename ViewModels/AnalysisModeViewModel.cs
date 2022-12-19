@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using esquire.Data.Fusion;
 using esquire.Models;
 using esquire.Services;
 
@@ -11,19 +12,16 @@ namespace esquire.ViewModels
 {
     public class AnalysisModeViewModel : ViewModelBase
     {
-        private IDatabaseService db;
         private AnalysisModeDataViewModel dataVm;
 
-        public AnalysisModeViewModel(IDatabaseService db)
+        public AnalysisModeViewModel(FusionContext db)
         {
-            this.db = db;
             DataVm = new AnalysisModeDataViewModel();
             
             WeakReferenceMessenger.Default.Register<ValueChangedMessage<string>>(this, (r, m) =>
             {
                 var typeString = m.Value;
                 DataVm = new AnalysisModeDataViewModel(db);
-//            DataVm = (AnalysisModeDataViewModel<BusinessUnit>?) Activator.CreateInstance(typeof(AnalysisModeDataViewModel<>).MakeGenericType(NavigationTypeMap(typeString)), db);
             });
         }
 

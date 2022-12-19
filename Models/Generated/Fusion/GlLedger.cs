@@ -1,0 +1,103 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace esquire.Models.Fusion
+{
+    public partial class GlLedger
+    {
+        public string? AccountedPeriodType { get; set; }
+        public decimal? ConfigurationId { get; set; }
+        public DateTime? CreationDate { get; set; }
+        public decimal? CriteriaSetId { get; set; }
+        public decimal? CumTransCodeCombinationId { get; set; }
+        public string? DailyTranslationRateType { get; set; }
+        public decimal? ImplicitAccessSetId { get; set; }
+        public decimal? ImplicitLedgerSetId { get; set; }
+        public DateTime? LastUpdateDate { get; set; }
+        public decimal? LedgerId { get; set; }
+        public string? Name { get; set; }
+        public decimal? NetIncomeCodeCombinationId { get; set; }
+        public string? PeriodAverageRateType { get; set; }
+        public string? PeriodEndRateType { get; set; }
+        public string? PeriodSetName { get; set; }
+        public decimal? ResEncumbCodeCombinationId { get; set; }
+        public decimal? RetEarnCodeCombinationId { get; set; }
+        public decimal? RoundingCodeCombinationId { get; set; }
+        public decimal? ShortName { get; set; }
+        public decimal? TransactionCalendarId { get; set; }
+        public string? SuspenseAllowedFlag { get; set; }
+        public string? AlcLedgerTypeCode { get; set; }
+        public string? AllowIntercompanyPostFlag { get; set; }
+        public string? ApDocSequencingOptionFlag { get; set; }
+        public string? ArDocSequencingOptionFlag { get; set; }
+        public string? AttributeCategory { get; set; }
+        public string? AutomateSecJrnlRevFlag { get; set; }
+        public string? AutomaticallyCreatedFlag { get; set; }
+        public string? AutorevAfterOpenPrdFlag { get; set; }
+        public string? BalSegColumnName { get; set; }
+        public string? BalSegValueOptionCode { get; set; }
+        public decimal? BalSegValueSetId { get; set; }
+        public string? BudgetPeriodAvgRateType { get; set; }
+        public string? BudgetPeriodEndRateType { get; set; }
+        public decimal? ChartOfAccountsId { get; set; }
+        public string? CompleteFlag { get; set; }
+        public string? CompletionStatusCode { get; set; }
+        public string? ConsolidationLedgerFlag { get; set; }
+        public string? CreateJeFlag { get; set; }
+        public string? CreatedBy { get; set; }
+        public decimal? CrossLgrClrAccCcid { get; set; }
+        public string? CurrencyCode { get; set; }
+        public string? Description { get; set; }
+        public string? DocSequencingOptionCode { get; set; }
+        public string? EnableAutomaticTaxFlag { get; set; }
+        public string? EnableAverageBalancesFlag { get; set; }
+        public string? EnableBudgetaryControlFlag { get; set; }
+        public string? EnableJeApprovalFlag { get; set; }
+        public string? EnableReconciliationFlag { get; set; }
+        public string? EnableRevalSsTrackFlag { get; set; }
+        public string? EnableSecondaryTrackFlag { get; set; }
+        public string? EnfSeqDateCorrelationCode { get; set; }
+        public string? FirstLedgerPeriodName { get; set; }
+        public decimal? FutureEnterablePeriodsLimit { get; set; }
+        public decimal? IntercoGainLossCcid { get; set; }
+        public string? JrnlsGroupByDateFlag { get; set; }
+        public string? LastUpdateLogin { get; set; }
+        public string? LastUpdatedBy { get; set; }
+        public string? LatestEncumbranceYear { get; set; }
+        public string? LatestOpenedPeriodName { get; set; }
+        public string? LeLedgerTypeCode { get; set; }
+        public string? LedgerAttributes { get; set; }
+        public string? LedgerCategoryCode { get; set; }
+        public string? MgtSegColumnName { get; set; }
+        public string? MgtSegValueOptionCode { get; set; }
+        public decimal? MgtSegValueSetId { get; set; }
+        public string? MinimumThresholdAmount { get; set; }
+        public string? NetClosingBalFlag { get; set; }
+        public string? NumberOfProcessors { get; set; }
+        public string? ObjectTypeCode { get; set; }
+        public decimal? ObjectVersionNumber { get; set; }
+        public string? PopUpStatAccountFlag { get; set; }
+        public string? PriorPrdNotificationFlag { get; set; }
+        public string? ProcessingUnitSize { get; set; }
+        public string? ReleaseUpgradeFrom { get; set; }
+        public string? RequireBudgetJournalsFlag { get; set; }
+        public string? RevalFromPriLgrCurr { get; set; }
+        public string? SequencingModeCode { get; set; }
+        public string? SlaAccountingMethodCode { get; set; }
+        public string? SlaAccountingMethodType { get; set; }
+        public string? SlaBalByLedgerCurrFlag { get; set; }
+        public string? SlaDescriptionLanguage { get; set; }
+        public decimal? SlaEnteredCurBalSusCcid { get; set; }
+        public string? SlaLedgerCashBasisFlag { get; set; }
+        public decimal? SlaLedgerCurBalSusCcid { get; set; }
+        public string? SlaSequencingFlag { get; set; }
+        public string? StrictPeriodCloseFlag { get; set; }
+        public string? ThresholdAmount { get; set; }
+        public string? TrackRoundingImbalanceFlag { get; set; }
+        public string? TranslateEodFlag { get; set; }
+        public string? TranslateQatdFlag { get; set; }
+        public string? TranslateYatdFlag { get; set; }
+        public string? UssglOptionCode { get; set; }
+        public string? ValidateJournalRefDate { get; set; }
+    }
+}
