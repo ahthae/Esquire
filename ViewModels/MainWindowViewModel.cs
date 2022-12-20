@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.ViewModels;
 
-public class ShowSignOnMessage {}
+public class SignOnShowMessage{}
 
 public class MainWindowViewModel : ViewModelBase
 {
@@ -17,8 +17,10 @@ public class MainWindowViewModel : ViewModelBase
         this.Page = new AnalysisModeViewModel(dbContext);
 //        if (services.GetService<ISettingsService>().WasInitialized)
         if (true)
-            WeakReferenceMessenger.Default.Send<ShowSignOnMessage>();
+            WeakReferenceMessenger.Default.Send<SignOnShowMessage>();
     }
+    
+    
 
     public ViewModelBase Page
     {

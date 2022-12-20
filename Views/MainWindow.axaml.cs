@@ -1,23 +1,25 @@
+using System;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.Views;
 
 public partial class MainWindow : Window
 {
     private SignOnWindow _signOnWindow;
-    public MainWindow()
+    public MainWindow(IServiceProvider services)
     {
         InitializeComponent();
-        _signOnWindow = new SignOnWindow();
+        _signOnWindow = new SignOnWindow(services) { DataContext = services.GetService<SignOnViewModel>() };
         _signOnWindow.Topmost = true;
-        WeakReferenceMessenger.Default.Register<ShowSignOnMessage>(this, ShowSignOnHandler);
+        WeakReferenceMessenger.Default.Register<SignOnShowMessage>(this, ShowSignOnHandler);
     }
 
-    public async void ShowSignOnHandler(object? receiver, ShowSignOnMessage? message)
+    private void ShowSignOnHandler(object? receiver, SignOnShowMessage? message)
     {
-        this.Show();
+        Show();
         _signOnWindow.ShowDialog(this);
     }
 }

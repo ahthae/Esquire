@@ -2,9 +2,68 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:esquire.Views"
+        xmlns:viewModels="clr-namespace:esquire.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="esquire.SignOnWindow"
-        Title="SignonWindow">
-        <views:SignOnView/>
+        Title="SignOnWindow">
+     
+	<Design.DataContext>
+		<viewModels:SignOnViewModel/>
+	</Design.DataContext>
+    
+    <DockPanel Margin="10">
+        <Grid DockPanel.Dock="Bottom" ShowGridLines="False">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".5*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            
+            <Button HorizontalAlignment="Left" Grid.Column="0">Test</Button>
+            <Button HorizontalAlignment="Right" Grid.Column="1" Click="Button_OnClick" Command="{Binding  ConfirmButton_OnClick}">Confirm</Button>
+            <Button HorizontalAlignment="Right" Grid.Column="2" Click="Button_OnClick">Cancel</Button>
+        </Grid>
+        
+        <StackPanel>
+            <Rectangle Height="200"/>
+            <Grid ShowGridLines="False" VerticalAlignment="Bottom">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                
+                <Grid.Styles>
+                    <Style Selector="TextBlock">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="5"/>
+                    </Style>
+                    <Style Selector="TextBox">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="5"/>
+                    </Style>
+                </Grid.Styles>
+                
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="User ID"/>
+                <TextBox Grid.Row="0" Grid.Column="1" 
+                         Text="{Binding Settings.Database.UserId}"/>
+                
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Text="Password"/>
+                <TextBox Grid.Row="1" Grid.Column="1" 
+                         Text="{Binding Settings.Database.Password}"/>
+                
+                <TextBlock Grid.Row="2" Grid.Column="0"
+                           Text="Data Source"/>
+                <TextBox Grid.Row="2" Grid.Column="1" 
+                         Text="{Binding Settings.Database.DataSource}"/>
+            </Grid>
+        </StackPanel>
+    </DockPanel>
 </Window>
