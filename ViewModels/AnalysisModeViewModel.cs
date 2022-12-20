@@ -56,19 +56,3 @@ namespace esquire.ViewModels
     }
     
 }
-/*
-"SELECT DISTINCT hou.ORGANIZATION_ID     ""Organization ID."", " &
-    "                hou.NAME                ""Org. Name (Business Unit Name)"", " &
-    "                haouf.business_group_id ""Business Group ID."", " &
-    "                hou.DATE_TO             ""Org. To Date"" " &
-    "FROM FUSION.HR_ORG_UNIT_CLASSIFICATIONS_F HOUCF, " &
-    "     FUSION.HR_ALL_ORGANIZATION_UNITS_F   HAOUF, " &
-    "     FUSION.HR_ORGANIZATION_UNITS         hou " &
-    "WHERE hou.ORGANIZATION_ID       = haouf.ORGANIZATION_ID " &
-    "AND   haouf.ORGANIZATION_ID     = houcf.ORGANIZATION_ID " &
-    "AND   houcf.CLASSIFICATION_CODE = 'FUN_BUSINESS_UNIT' " &
-    "AND   NVL(to_date(HOUCF.effective_end_date, 'dd-MON-RR HH:MI:SS AM'), sysdate) >= sysdate " &
-    "AND   NVL(to_date(HAOUF.effective_end_date, 'dd-MON-RR HH:MI:SS AM'), sysdate) >= sysdate " &
-    "AND   NVL(to_date(hou.DATE_TO,              'dd-MON-RR HH:MI:SS AM'), sysdate) >= sysdate " &
-    "ORDER BY ""Org. Name (Business Unit Name)"" "
-*/
