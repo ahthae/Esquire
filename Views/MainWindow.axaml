@@ -6,9 +6,9 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="esquire.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="esquire"
-		Content="{Binding Page}">
+        Title="esquire">
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
+	<ContentControl Content="{Binding Page}"/>
 </Window>

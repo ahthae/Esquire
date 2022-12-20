@@ -11,6 +11,7 @@ public class SettingsService : ObservableObject, ISettingsService
     private const string ConfigDirectory = "Config";
     private const string ConfigurationFile = "appsettings.json";
     private Options _settings = new();
+    private bool _wasInitialized = false;
 
     public SettingsService()
     {
@@ -21,16 +22,22 @@ public class SettingsService : ObservableObject, ISettingsService
         Settings = config.Get<Options>();
     }
 
-    public void Write()
+    public bool WasInitialized
     {
-        CheckAndCreateConfigPath();
-        File.WriteAllText(GetConfigPath(), JsonSerializer.Serialize(Settings));
+        get => _wasInitialized;
+        set => SetProperty(ref _wasInitialized, value);
     }
     
     public Options Settings 
     { 
         get => _settings;
         set => SetProperty(ref _settings, value); 
+    }
+
+    public void Write()
+    {
+        CheckAndCreateConfigPath();
+        File.WriteAllText(GetConfigPath(), JsonSerializer.Serialize(Settings));
     }
 
     // Checks whether the config file path exists and creates it if it doesn't
@@ -46,6 +53,7 @@ public class SettingsService : ObservableObject, ISettingsService
         {
             Console.WriteLine($"Creating new config file at {Path.GetFullPath(configPath)}");
             Write();
+            WasInitialized = true;
         }
     }
     

@@ -5,6 +5,7 @@ namespace esquire.Services.Settings;
 public interface ISettingsService
 {
     public Options Settings { get; set; }
+    public bool WasInitialized { get; set; }
     public void Write();
 }
 
