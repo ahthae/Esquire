@@ -12,9 +12,9 @@ public class MainWindowViewModel : ViewModelBase
 {
     private ViewModelBase page;
 
-    public MainWindowViewModel(FusionContext dbContext)
+    public MainWindowViewModel(IServiceProvider serviceProvider)
     {
-        this.Page = new AnalysisModeViewModel(dbContext);
+        this.Page = new AnalysisModeViewModel(serviceProvider);
 //        if (services.GetService<ISettingsService>().WasInitialized)
         if (true)
             WeakReferenceMessenger.Default.Send<SignOnShowMessage>();

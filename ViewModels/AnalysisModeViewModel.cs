@@ -7,19 +7,21 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using esquire.Data.Fusion;
 using esquire.Models.Fusion;
+using esquire.Services.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.ViewModels
 {
     public partial class AnalysisModeViewModel : ViewModelBase
     {
-        private readonly FusionContext _db;
+        private readonly IServiceProvider _serviceProvider;
         [ObservableProperty] private IEnumerable _data;
         [ObservableProperty] private ObservableCollection<FunAllBusinessUnitsV> _businessUnits;
         
-        public AnalysisModeViewModel(FusionContext db)
+        public AnalysisModeViewModel(IServiceProvider serviceProvider)
         {
-            _db = db;
+            _serviceProvider = serviceProvider;
             WeakReferenceMessenger.Default.Register<ValueChangedMessage<string>>(this, HandleDbNavigation);
         }
 
@@ -27,14 +29,15 @@ namespace esquire.ViewModels
         {
                 try
                 {
+                    FusionContext db = _serviceProvider.GetService<FusionContext>();
                     switch (message.Value)
                     {
-                        case "Business Units": Data = await _db.FunAllBusinessUnitsVs.ToListAsync(); break;
+                        case "Business Units": Data = await db.FunAllBusinessUnitsVs.ToListAsync(); break;
                         case "Business Unit Organizations":
                             Data = await (
-                                from hou in _db.HrOrganizationUnits
-                                join haouf in _db.HrAllOrganizationUnitsFs on hou.OrganizationId equals haouf.OrganizationId
-                                join houcf in _db.HrOrgUnitClassificationsFs.Where(i => i.ClassificationCode == "FUN_BUSINESS_UNIT")
+                                from hou in db.HrOrganizationUnits
+                                join haouf in db.HrAllOrganizationUnitsFs on hou.OrganizationId equals haouf.OrganizationId
+                                join houcf in db.HrOrgUnitClassificationsFs.Where(i => i.ClassificationCode == "FUN_BUSINESS_UNIT")
                                     on haouf.OrganizationId equals houcf.OrganizationId
                                 select new
                                 {
