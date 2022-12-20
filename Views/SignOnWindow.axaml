@@ -19,13 +19,13 @@
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             
-            <Button HorizontalAlignment="Left" Grid.Column="0">Test</Button>
-            <Button HorizontalAlignment="Right" Grid.Column="1" Click="Button_OnClick" Command="{Binding  ConfirmButton_OnClick}">Confirm</Button>
+            <Button HorizontalAlignment="Left" Grid.Column="0" Command="{Binding TestConnection}">Test</Button>
+            <Button HorizontalAlignment="Right" Grid.Column="1" Click="Button_OnClick" Command="{Binding SaveSettings}">Confirm</Button>
             <Button HorizontalAlignment="Right" Grid.Column="2" Click="Button_OnClick">Cancel</Button>
         </Grid>
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding ConnectionTestResult}"/>
         
         <StackPanel>
-            <Rectangle Height="200"/>
             <Grid ShowGridLines="False" VerticalAlignment="Bottom">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
