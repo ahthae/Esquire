@@ -1,5 +1,6 @@
 using System;
 using System.Data.Common;
+using System.Threading.Tasks;
 using esquire.Services;
 using esquire.Services.Settings;
 
@@ -31,16 +32,19 @@ public class SignOnViewModel : ViewModelBase
         set => SetProperty(ref _connectionTestResult, value);
     }
 
-    public bool TestConnection()
+    public async Task<bool> TestConnection()
     {
         try
         {
-            DbConnection connection = _databaseService.GetConnection();
-            connection.Open();
-            connection.Close();
-            ConnectionTestResult = "Connection test successful!";
-            Console.WriteLine(ConnectionTestResult);
-            return true;
+            return await Task.Run(() =>
+            {
+                DbConnection connection = _databaseService.GetConnection();
+                connection.Open();
+                connection.Close();
+                ConnectionTestResult = "Connection test successful!";
+                Console.WriteLine(ConnectionTestResult);
+                return true;
+            });
         }
         catch (Exception ex)
         {

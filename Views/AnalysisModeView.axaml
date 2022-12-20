@@ -16,8 +16,8 @@
 					   DisplayMode="Inline">
 				<SplitView.Pane>
 					<TreeView>
-						<TreeViewItem Header="Foundational Analysis">
-							<TreeViewItem Header="Business Units">
+						<TreeViewItem IsExpanded="True" Header="Foundational Analysis">
+							<TreeViewItem IsExpanded="True" Header="Business Units">
 								<TreeViewItem Header="Business Units" DoubleTapped="InputElement_OnDoubleTapped"/>
 								<TreeViewItem Header="Business Unit Organizations" DoubleTapped="InputElement_OnDoubleTapped"/>
 							</TreeViewItem>
@@ -27,9 +27,7 @@
 
 				<Grid>
 					<Panel >
-						
-						<DataGrid AutoGenerateColumns="True"
-								  Items="{Binding Data}"/>
+						<DataGrid AutoGenerateColumns="True" Items="{Binding Data}"/>
 					</Panel>
 				</Grid>
 			</SplitView>

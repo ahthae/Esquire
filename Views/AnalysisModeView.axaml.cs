@@ -14,8 +14,8 @@ namespace esquire.Views
         }
 
         private void InputElement_OnDoubleTapped(object? sender, RoutedEventArgs e)
-        {
-            WeakReferenceMessenger.Default.Send(new ValueChangedMessage<string>(((TreeViewItem)sender).Header.ToString()));
+        { 
+            WeakReferenceMessenger.Default.Send(new DataQueryMessage((sender as TreeViewItem)?.Header.ToString() ?? ""));
         }
     }
 }
