@@ -46,4 +46,11 @@
   <ItemGroup>
     <Folder Include="Models\Generated" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\SignOnWindow.axaml.cs">
+      <DependentUpon>SignonWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

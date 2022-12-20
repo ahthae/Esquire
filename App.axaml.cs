@@ -28,7 +28,7 @@ public partial class App : Application
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(services),
+                DataContext = services.GetService<MainWindowViewModel>()
             };
         }
 
@@ -39,7 +39,13 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
+        services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<DatabaseModeViewModel>();
+        services.AddTransient<AnalysisModeViewModel>();
+        services.AddTransient<SignOnViewModel>();
+
         services.AddSingleton<ISettingsService, SettingsService>();
+        
         services.AddScoped<IDatabaseService, DatabaseService>();
         services.AddDbContext<FusionContext>((serviceProvider, options) => {
             IDatabaseService db = serviceProvider.GetService<IDatabaseService>();
