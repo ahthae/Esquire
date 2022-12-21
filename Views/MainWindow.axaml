@@ -6,7 +6,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="esquire.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="esquire">
+        Title="esquire"
+        Name="Main">
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>

@@ -18,8 +18,9 @@
 					<TreeView>
 						<TreeViewItem IsExpanded="True" Header="Foundational Analysis">
 							<TreeViewItem IsExpanded="True" Header="Business Units">
-								<TreeViewItem Header="Business Units" DoubleTapped="InputElement_OnDoubleTapped"/>
-								<TreeViewItem Header="Business Unit Organizations" DoubleTapped="InputElement_OnDoubleTapped"/>
+								<TreeViewItem Header="Business Units" DoubleTapped="NavigationTreeView_DoubleTap"/>
+								<TreeViewItem Header="Business Unit Organizations" DoubleTapped="NavigationTreeView_DoubleTap"/>
+								<TreeViewItem Header="All Business Units for This User" DoubleTapped="NavigationTreeView_DoubleTapWithUser"/>
 							</TreeViewItem>
 						</TreeViewItem>
 					</TreeView>

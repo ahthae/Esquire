@@ -1,6 +1,7 @@
 using System;
+using System.Collections;
+using System.Threading.Tasks;
 using Avalonia.Controls;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         _serviceProvider = serviceProvider;
         WeakReferenceMessenger.Default.Register<SignOnShowMessage>(this, ShowSignOnHandler);
+        WeakReferenceMessenger.Default.Register<ShowUserDialogMessage>(this, ShowUserDialogHandler);
     }
 
     private void ShowSignOnHandler(object? receiver, SignOnShowMessage? message)
@@ -25,5 +27,14 @@ public partial class MainWindow : Window
             DataContext = _serviceProvider.GetService<SignOnViewModel>(),
             Topmost = true
         }.ShowDialog(this);
+    }
+
+    private async void ShowUserDialogHandler(object? receiver, ShowUserDialogMessage? message)
+    {
+        Show();
+        message.Reply(await new AnalysisModeUserDialogWindow()
+        {
+            DataContext = _serviceProvider.GetService<AnalysisModeUserDialogViewModel>()
+        }.ShowDialog<string>(this));
     }
 }
