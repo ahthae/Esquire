@@ -1,0 +1,33 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:esquire.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="esquire.Views.AnalysisModeUserDialogWindow"
+        Title="AnalysisModeUserDialog"
+        Opened="OnInitialized">
+	<Design.DataContext>
+		<viewModels:AnalysisModeUserDialogViewModel/>
+	</Design.DataContext>
+        <StackPanel Margin="20">
+			<AutoCompleteBox Name="UserSelection"
+							 AsyncPopulator="{Binding PopulateUsersAsync}"
+							 Items="{Binding Users}"
+							 FilterMode="None"
+							 SelectedItem="{Binding SelectedUser}"
+							 ValueMemberBinding="{Binding Username}"
+				             Text="{Binding SelectedUser.Username, Mode=OneTime}">
+				<AutoCompleteBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Username}"/>
+					</DataTemplate>
+				</AutoCompleteBox.ItemTemplate>
+			</AutoCompleteBox>
+            <TextBlock>Oracle Applications Cloud (Personnel) Global ID</TextBlock>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedUser.UserGuid}"/>
+            <TextBlock>Oracle Applications Cloud (Personnel) User ID</TextBlock>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedUser.UserId}"/>
+            <Button Content="Confirm" Click="Button_OnClick"/>
+        </StackPanel>
+</Window>

@@ -3,34 +3,41 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:esquire.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="810"
              x:Class="esquire.Views.AnalysisModeView">
 	<Design.DataContext>
 		<viewModels:AnalysisModeViewModel/>
 	</Design.DataContext>
 	
-	<TabControl>
-		<TabItem Header="Foundation">
-			
-			<SplitView IsPaneOpen="True"
-					   DisplayMode="Inline">
-				<SplitView.Pane>
-					<TreeView>
-						<TreeViewItem IsExpanded="True" Header="Foundational Analysis">
-							<TreeViewItem IsExpanded="True" Header="Business Units">
-								<TreeViewItem Header="Business Units" DoubleTapped="InputElement_OnDoubleTapped"/>
-								<TreeViewItem Header="Business Unit Organizations" DoubleTapped="InputElement_OnDoubleTapped"/>
+	<DockPanel>
+		<Menu DockPanel.Dock="Top">
+			<MenuItem Header="_Edit">
+				<MenuItem Header="_Database"/>
+			</MenuItem>
+		</Menu>
+		
+		<TabControl>
+			<TabItem Header="System Configuration"/>
+			<TabItem Header="Foundation" IsSelected="True">
+				<Panel Margin="5">
+					<Grid ColumnDefinitions="*,3,4*">
+						<TreeView Grid.Column="0">
+							<TreeViewItem IsExpanded="True" Header="Foundational Analysis">
+								<TreeViewItem IsExpanded="True" Header="Business Units"/>
+									<TreeViewItem Header="Business Units" DoubleTapped="NavigationTreeView_DoubleTap"/>
+									<TreeViewItem Header="Business Unit Organizations" DoubleTapped="NavigationTreeView_DoubleTap"/>
+									<TreeViewItem Header="All Business Units for This User" DoubleTapped="NavigationTreeView_DoubleTapWithUser"/>
 							</TreeViewItem>
-						</TreeViewItem>
-					</TreeView>
-				</SplitView.Pane>
-
-				<Grid>
-					<Panel >
-						<DataGrid AutoGenerateColumns="True" Items="{Binding Data}"/>
-					</Panel>
-				</Grid>
-			</SplitView>
-		</TabItem>
-	</TabControl>
+						</TreeView>
+						<GridSplitter Grid.Column="1"/>
+						<Panel Grid.Column="2">
+							<DataGrid CanUserResizeColumns="True"
+									  AutoGenerateColumns="True" 
+									  Items="{Binding Data}"/>
+						</Panel>
+					</Grid>
+				</Panel>
+			</TabItem>
+		</TabControl>
+	</DockPanel>
 </UserControl>

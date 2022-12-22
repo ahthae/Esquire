@@ -1,0 +1,71 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+    <Style Selector="Window, UserControl">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+    </Style>
+	
+	<Style Selector="Menu">
+		<Setter Property="Background" Value="#8c7b75"/>
+	</Style>
+	<Style Selector="TabControl">
+		<Setter Property="Background" Value="#a59a96"/>
+	</Style>
+	<Style Selector="TabItem">
+		<Setter Property="Background" Value="#bdb9b9"/>
+	</Style>
+	<Style Selector="TabItem:selected">
+		<Setter Property="BorderBrush" Value="#bdb9b9"/>
+	</Style>
+	<Style Selector="TabItem Grid">
+	</Style>
+	<Style Selector="TreeView">
+		<Setter Property="Background" Value="#efebe9"/>
+	</Style>
+	<Style Selector="DataGrid">
+		<Setter Property="Background" Value="#fffefa"/>
+	</Style>
+	<Style Selector="Menu">
+		<Setter Property="Height" Value="20"/>
+		<Setter Property="MinHeight" Value="0"/>
+		<Setter Property="Margin" Value="0"/>
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="BorderThickness" Value="0"/>
+	</Style>
+	<Style Selector="MenuItem">
+		<Setter Property="BorderThickness" Value="0"/>
+	</Style>
+	<Style Selector="MenuItem, MenuItem:nth-child(n):is(MenuItem)">
+		<Setter Property="FontSize" Value="13"/>
+	</Style>
+	<Style Selector="TabControl:nth-child(n), TabControl">
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Margin" Value="0"/>
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="FontSize" Value="13"/>
+	</Style>
+	<Style Selector="TabControl">
+	</Style>
+	<Style Selector="TabItem">
+		<Setter Property="MinHeight" Value="24"/>
+		<Setter Property="FontSize" Value="13"/>
+	</Style>
+	<Style Selector="TreeView">
+		<Setter Property="Margin" Value="0"/>
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="BorderThickness" Value="0"/>
+	</Style>
+	<Style Selector="DataGrid">
+	</Style>
+	<Style Selector="DataGridTextColumn">
+		<Setter Property="FontSize" Value="13"/>
+	</Style>
+</Styles>
