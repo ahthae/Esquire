@@ -37,7 +37,7 @@ public class SettingsService : ObservableObject, ISettingsService
     public void Write()
     {
         CheckAndCreateConfigPath();
-        File.WriteAllText(GetConfigPath(), JsonSerializer.Serialize(Settings));
+        WriteSettings();
     }
 
     // Checks whether the config file path exists and creates it if it doesn't
@@ -52,9 +52,14 @@ public class SettingsService : ObservableObject, ISettingsService
         if (!(new FileInfo(configPath).Exists))
         {
             Console.WriteLine($"Creating new config file at {Path.GetFullPath(configPath)}");
-            Write();
+            WriteSettings();
             WasInitialized = true;
         }
+    }
+
+    private void WriteSettings()
+    {
+        File.WriteAllText(GetConfigPath(), JsonSerializer.Serialize(Settings));
     }
     
     private static string GetConfigPath()

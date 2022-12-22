@@ -1,12 +1,11 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.Messaging;
-using esquire.Data.Fusion;
 using esquire.Services.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.ViewModels;
 
-public class SignOnShowMessage{}
+public class ShowDatabaseSettingsDialogMessage{}
 
 public class MainWindowViewModel : ViewModelBase
 {
@@ -14,10 +13,9 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel(IServiceProvider serviceProvider)
     {
-        this.Page = new AnalysisModeViewModel(serviceProvider);
-//        if (services.GetService<ISettingsService>().WasInitialized)
-        if (true)
-            WeakReferenceMessenger.Default.Send<SignOnShowMessage>();
+        Page = new AnalysisModeViewModel(serviceProvider);
+        if (serviceProvider.GetService<ISettingsService>().WasInitialized)
+            WeakReferenceMessenger.Default.Send<ShowDatabaseSettingsDialogMessage>();
     }
     
     

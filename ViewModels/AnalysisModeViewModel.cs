@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using esquire.Data.Fusion;
@@ -26,6 +27,11 @@ public class AnalysisModeViewModel : ViewModelBase
     {
         ServiceProvider = serviceProvider;
         WeakReferenceMessenger.Default.Register<DataQueryMessage>(this, (recipient, message) => { RunQueryAsync(message.Value, message.User); });
+    }
+
+    public void ShowDatabaseDialog()
+    {
+        WeakReferenceMessenger.Default.Send<ShowDatabaseSettingsDialogMessage>();
     }
 
     public IEnumerable Data

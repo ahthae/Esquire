@@ -15,11 +15,11 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         _serviceProvider = serviceProvider;
-        WeakReferenceMessenger.Default.Register<SignOnShowMessage>(this, ShowSignOnHandler);
+        WeakReferenceMessenger.Default.Register<ShowDatabaseSettingsDialogMessage>(this, ShowSignOnHandler);
         WeakReferenceMessenger.Default.Register<ShowUserDialogMessage>(this, ShowUserDialogHandler);
     }
 
-    private void ShowSignOnHandler(object? receiver, SignOnShowMessage? message)
+    private void ShowSignOnHandler(object? receiver, ShowDatabaseSettingsDialogMessage? message)
     {
         Show(); // Sometimes this handler is called while the window is hidden, and Avalonia throws an exception when showing a dialog from a hidden window
         new SignOnWindow(_serviceProvider)
