@@ -39,10 +39,11 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
+        services.AddTransient<SignOnViewModel>();
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<DatabaseModeViewModel>();
         services.AddTransient<AnalysisModeViewModel>();
-        services.AddTransient<SignOnViewModel>();
+        services.AddTransient<AnalysisModeUserDialogViewModel>();
 
         services.AddSingleton<ISettingsService, SettingsService>();
         

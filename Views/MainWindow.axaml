@@ -7,9 +7,12 @@
         x:Class="esquire.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="esquire"
-        Width="1440" Height="810">
+        Width="1440" Height="810"
+        Name="Main">
+	
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
+	
 	<ContentControl Content="{Binding Page}"/>
 </Window>
