@@ -3,19 +3,49 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:esquire.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="810"
              x:Class="esquire.Views.AnalysisModeView">
 	<Design.DataContext>
 		<viewModels:AnalysisModeViewModel/>
 	</Design.DataContext>
 	
+	<UserControl.Styles>
+		<Styles>
+			<Style Selector="TabControl, TabControl:nth-child(n)">
+				<Setter Property="BorderThickness" Value="0"/>
+				<Setter Property="Margin" Value="0"/>
+				<Setter Property="Padding" Value="0"/>
+				<Setter Property="FontSize" Value="13"/>
+			</Style>
+			<Style Selector="TabControl">
+				<Setter Property="Background" Value="#bdb9b9"/>
+			</Style>
+			<Style Selector="TabItem">
+				<Setter Property="MinHeight" Value="30"/>
+				<Setter Property="MinWidth" Value="0"/>
+				<Setter Property="FontSize" Value="13"/>
+				<Setter Property="Background" Value="#a59a96"/>
+			</Style>
+			<Style Selector="TabItem:nth-child(n)">
+			</Style>
+			<Style Selector="TreeView">
+				<Setter Property="Background" Value="#efebe9"/>
+			</Style>
+			<Style Selector="DataGrid">
+				<Setter Property="Background" Value="#fffefa"/>
+			</Style>
+			<Style Selector="DataGridCell">
+				<Setter Property="FontSize" Value="13"/>
+			</Style>
+		</Styles>
+	</UserControl.Styles>
+	
 	<TabControl>
-		<TabItem Header="Foundation">
-			
-			<SplitView IsPaneOpen="True"
-					   DisplayMode="Inline">
-				<SplitView.Pane>
-					<TreeView>
+		<TabItem Header="System Configuration"/>
+		<TabItem Header="Foundation" IsSelected="True">
+			<Panel>
+				<Grid ColumnDefinitions="*,4*">
+					<TreeView Grid.Column="0">
 						<TreeViewItem IsExpanded="True" Header="Foundational Analysis">
 							<TreeViewItem IsExpanded="True" Header="Business Units">
 								<TreeViewItem Header="Business Units" DoubleTapped="InputElement_OnDoubleTapped"/>
@@ -23,14 +53,13 @@
 							</TreeViewItem>
 						</TreeViewItem>
 					</TreeView>
-				</SplitView.Pane>
-
-				<Grid>
-					<Panel >
+					
+					<Panel Grid.Column="1">
 						<DataGrid AutoGenerateColumns="True" Items="{Binding Data}"/>
 					</Panel>
 				</Grid>
-			</SplitView>
+			</Panel>
 		</TabItem>
+		
 	</TabControl>
 </UserControl>
