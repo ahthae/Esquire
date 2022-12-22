@@ -23,10 +23,11 @@
 					<Grid ColumnDefinitions="*,3,4*">
 						<TreeView Grid.Column="0">
 							<TreeViewItem IsExpanded="True" Header="Foundational Analysis">
-								<TreeViewItem IsExpanded="True" Header="Business Units"/>
+								<TreeViewItem IsExpanded="True" Header="Business Units">
 									<TreeViewItem Header="Business Units" DoubleTapped="NavigationTreeView_DoubleTap"/>
 									<TreeViewItem Header="Business Unit Organizations" DoubleTapped="NavigationTreeView_DoubleTap"/>
 									<TreeViewItem Header="All Business Units for This User" DoubleTapped="NavigationTreeView_DoubleTapWithUser"/>
+								</TreeViewItem>
 							</TreeViewItem>
 						</TreeView>
 						<GridSplitter Grid.Column="1"/>
