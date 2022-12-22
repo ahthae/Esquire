@@ -10,24 +10,28 @@
 	<Design.DataContext>
 		<viewModels:AnalysisModeUserDialogViewModel/>
 	</Design.DataContext>
-        <StackPanel Margin="20">
-			<AutoCompleteBox Name="UserSelection"
-							 AsyncPopulator="{Binding PopulateUsersAsync}"
-							 Items="{Binding Users}"
-							 FilterMode="None"
-							 SelectedItem="{Binding SelectedUser}"
-							 ValueMemberBinding="{Binding Username}"
-				             Text="{Binding SelectedUser.Username, Mode=OneTime}">
-				<AutoCompleteBox.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding Username}"/>
-					</DataTemplate>
-				</AutoCompleteBox.ItemTemplate>
-			</AutoCompleteBox>
-            <TextBlock>Oracle Applications Cloud (Personnel) Global ID</TextBlock>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedUser.UserGuid}"/>
-            <TextBlock>Oracle Applications Cloud (Personnel) User ID</TextBlock>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedUser.UserId}"/>
-            <Button Content="Confirm" Click="Button_OnClick"/>
-        </StackPanel>
+	
+	<StackPanel Margin="20">
+		<AutoCompleteBox Name="UserSelection"
+						 AsyncPopulator="{Binding PopulateUsersAsync}"
+						 Items="{Binding Users}"
+						 FilterMode="None"
+						 SelectedItem="{Binding SelectedUser}"
+						 ValueMemberBinding="{Binding Username}"
+						 Text="{Binding SelectedUser.Username, Mode=OneTime}">
+			<AutoCompleteBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Username}"/>
+				</DataTemplate>
+			</AutoCompleteBox.ItemTemplate>
+		</AutoCompleteBox>
+		<TextBlock>Oracle Applications Cloud (Personnel) Global ID</TextBlock>
+		<TextBox IsReadOnly="True" Text="{Binding SelectedUser.UserGuid}"/>
+		<TextBlock>Oracle Applications Cloud (Personnel) User ID</TextBlock>
+		<TextBox IsReadOnly="True" Text="{Binding SelectedUser.UserId}"/>
+		<Grid ColumnDefinitions="Auto,Auto">
+			<Button Grid.Column="0" Content="Confirm" IsEnabled="True" Command="{Binding OnConfirmCommand}"/>
+			<Button Grid.Column="1" Content="Cancel" Command="{Binding $parent[Window].Close}"/>
+		</Grid>
+	</StackPanel>
 </Window>

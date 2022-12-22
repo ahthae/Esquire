@@ -1,14 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.ViewModels;
-using System.Linq;
 
 namespace esquire.Views;
 
@@ -30,10 +25,11 @@ public partial class AnalysisModeUserDialogWindow : Window
     private void OnInitialized(object? sender, EventArgs e)
     {
         WeakReferenceMessenger.Default.Send<GetDatabaseUsersMessage>();
-    }
-
-    private void Button_OnClick(object? sender, RoutedEventArgs e)
-    {
-        Close((DataContext as AnalysisModeUserDialogViewModel)?.SelectedUser.Username); //TODO handle null SelectedUser
+        WeakReferenceMessenger.Default.Register<ConfirmDatabaseUserMessage>(this, (r, m) =>
+        {
+            var viewModel = DataContext as AnalysisModeUserDialogViewModel;
+            if (viewModel?.SelectedUser is not null)
+                Close(viewModel.SelectedUser.Username); //TODO handle null SelectedUser
+        });
     }
 }

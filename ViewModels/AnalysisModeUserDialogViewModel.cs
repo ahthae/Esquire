@@ -1,14 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.Data.Fusion;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace esquire.ViewModels;
 
 public class GetDatabaseUsersMessage { }
+public class ConfirmDatabaseUserMessage { }
 
 public partial class AnalysisModeUserDialogViewModel : ViewModelBase
 {
@@ -28,7 +25,7 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
     
     private readonly IServiceProvider _serviceProvider;
     [ObservableProperty] private ObservableCollection<UserDialogUser> _users;
-    [ObservableProperty] private UserDialogUser _selectedUser;
+    [ObservableProperty] private UserDialogUser? _selectedUser;
 
     public AnalysisModeUserDialogViewModel(IServiceProvider serviceProvider)
     {
@@ -52,15 +49,15 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
                 Console.WriteLine($"Error querying database for users {ex.Message}");
             }
         });
-
         PopulateUsers = PopulateUsersAsync;
     }
 
+    public void OnConfirmCommand() => WeakReferenceMessenger.Default.Send(new ConfirmDatabaseUserMessage());
     public Func<string?,CancellationToken,Task<IEnumerable<object>>> PopulateUsers { get; }
 
     private async Task<IEnumerable<object>> PopulateUsersAsync(string? text, CancellationToken token)
     {
-        return from user in Users.Where(user => (user.Username is not null) ? user.Username.Contains(text ?? "") : false )
+        return from user in Users.Where(user => user.Username is not null ? user.Username.Contains(text ?? "") : false )
             select user;
     }
 
@@ -77,6 +74,7 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
                     UserGuid = user.UserGuid,
                     UserId = user.UserId
                 });
+            SelectedUser = null;
         });
     }
 }
