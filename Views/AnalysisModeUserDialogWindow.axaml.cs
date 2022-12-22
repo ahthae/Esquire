@@ -29,7 +29,9 @@ public partial class AnalysisModeUserDialogWindow : Window
         {
             var viewModel = DataContext as AnalysisModeUserDialogViewModel;
             if (viewModel?.SelectedUser is not null)
-                Close(viewModel.SelectedUser.Username); //TODO handle null SelectedUser
+                Close(viewModel.SelectedUser.Username);
+            else
+                Close();
         });
     }
 }
