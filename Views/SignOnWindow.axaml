@@ -56,7 +56,7 @@
                 
                 <TextBlock Grid.Row="1" Grid.Column="0"
                            Text="Password"/>
-                <TextBox Grid.Row="1" Grid.Column="1" 
+                <TextBox PasswordChar="*" Grid.Row="1" Grid.Column="1" 
                          Text="{Binding Settings.Database.Password}"/>
                 
                 <TextBlock Grid.Row="2" Grid.Column="0"
