@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:esquire.ViewModels"
              mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="810"
              x:Class="esquire.Views.AnalysisModeView">
+	
 	<Design.DataContext>
 		<viewModels:AnalysisModeViewModel/>
 	</Design.DataContext>
