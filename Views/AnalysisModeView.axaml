@@ -11,22 +11,19 @@
 	
 	<UserControl.Styles>
 		<Styles>
-			<Style Selector="TabControl, TabControl:nth-child(n)">
-				<Setter Property="BorderThickness" Value="0"/>
-				<Setter Property="Margin" Value="0"/>
-				<Setter Property="Padding" Value="0"/>
-				<Setter Property="FontSize" Value="13"/>
+			<Style Selector="Menu">
+				<Setter Property="Background" Value="#8c7b75"/>
 			</Style>
 			<Style Selector="TabControl">
-				<Setter Property="Background" Value="#bdb9b9"/>
-			</Style>
-			<Style Selector="TabItem">
-				<Setter Property="MinHeight" Value="30"/>
-				<Setter Property="MinWidth" Value="0"/>
-				<Setter Property="FontSize" Value="13"/>
 				<Setter Property="Background" Value="#a59a96"/>
 			</Style>
-			<Style Selector="TabItem:nth-child(n)">
+			<Style Selector="TabItem">
+				<Setter Property="Background" Value="#bdb9b9"/>
+			</Style>
+			<Style Selector="TabItem:selected">
+				<Setter Property="BorderBrush" Value="#bdb9b9"/>
+			</Style>
+			<Style Selector="TabItem Grid">
 			</Style>
 			<Style Selector="TreeView">
 				<Setter Property="Background" Value="#efebe9"/>
@@ -34,32 +31,75 @@
 			<Style Selector="DataGrid">
 				<Setter Property="Background" Value="#fffefa"/>
 			</Style>
-			<Style Selector="DataGridCell">
+		</Styles>
+		<Styles>
+			<Style Selector="Menu">
+				<Setter Property="Height" Value="20"/>
+				<Setter Property="MinHeight" Value="0"/>
+				<Setter Property="Margin" Value="0"/>
+				<Setter Property="Padding" Value="0"/>
+				<Setter Property="BorderThickness" Value="0"/>
+			</Style>
+			<Style Selector="MenuItem">
+				<Setter Property="BorderThickness" Value="0"/>
+			</Style>
+			<Style Selector="MenuItem, MenuItem:nth-child(n):is(MenuItem)">
+				<Setter Property="FontSize" Value="13"/>
+			</Style>
+			<Style Selector="TabControl:nth-child(n), TabControl">
+				<Setter Property="BorderThickness" Value="0"/>
+				<Setter Property="Margin" Value="0"/>
+				<Setter Property="Padding" Value="0"/>
+				<Setter Property="FontSize" Value="13"/>
+			</Style>
+			<Style Selector="TabControl">
+			</Style>
+			<Style Selector="TabItem">
+				<Setter Property="MinHeight" Value="24"/>
+				<Setter Property="FontSize" Value="13"/>
+			</Style>
+			<Style Selector="TreeView">
+				<Setter Property="Margin" Value="0"/>
+				<Setter Property="Padding" Value="0"/>
+				<Setter Property="BorderThickness" Value="0"/>
+			</Style>
+			<Style Selector="DataGrid">
+			</Style>
+			<Style Selector="DataGridTextColumn">
 				<Setter Property="FontSize" Value="13"/>
 			</Style>
 		</Styles>
 	</UserControl.Styles>
 	
-	<TabControl>
-		<TabItem Header="System Configuration"/>
-		<TabItem Header="Foundation" IsSelected="True">
-			<Panel>
-				<Grid ColumnDefinitions="*,4*">
-					<TreeView Grid.Column="0">
-						<TreeViewItem IsExpanded="True" Header="Foundational Analysis">
-							<TreeViewItem IsExpanded="True" Header="Business Units">
-								<TreeViewItem Header="Business Units" DoubleTapped="InputElement_OnDoubleTapped"/>
-								<TreeViewItem Header="Business Unit Organizations" DoubleTapped="InputElement_OnDoubleTapped"/>
-							</TreeViewItem>
-						</TreeViewItem>
-					</TreeView>
-					
-					<Panel Grid.Column="1">
-						<DataGrid AutoGenerateColumns="True" Items="{Binding Data}"/>
-					</Panel>
-				</Grid>
-			</Panel>
-		</TabItem>
+	<DockPanel>
+		<Menu DockPanel.Dock="Top">
+			<MenuItem Header="_Edit">
+				<MenuItem Header="_Database"/>
+			</MenuItem>
+		</Menu>
 		
-	</TabControl>
+		<TabControl>
+			<TabItem Header="System Configuration"/>
+			<TabItem Header="Foundation" IsSelected="True">
+				<Panel Margin="5">
+					<Grid ColumnDefinitions="*,3,4*">
+						<TreeView Grid.Column="0">
+							<TreeViewItem IsExpanded="True" Header="Foundational Analysis">
+								<TreeViewItem IsExpanded="True" Header="Business Units">
+									<TreeViewItem Header="Business Units" DoubleTapped="InputElement_OnDoubleTapped"/>
+									<TreeViewItem Header="Business Unit Organizations" DoubleTapped="InputElement_OnDoubleTapped"/>
+								</TreeViewItem>
+							</TreeViewItem>
+						</TreeView>
+						<GridSplitter Grid.Column="1"/>
+						<Panel Grid.Column="2">
+							<DataGrid CanUserResizeColumns="True"
+							          AutoGenerateColumns="True" 
+							          Items="{Binding Data}"/>
+						</Panel>
+					</Grid>
+				</Panel>
+			</TabItem>
+		</TabControl>
+	</DockPanel>
 </UserControl>
