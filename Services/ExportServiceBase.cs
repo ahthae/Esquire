@@ -5,7 +5,7 @@ namespace esquire.Services;
 
 public abstract class ExportServiceBase : IExportService
 {
-    private ISettingsService _settingsService;
+    protected ISettingsService _settingsService;
 
     public ExportServiceBase(ISettingsService settingsService) => _settingsService = settingsService;
 

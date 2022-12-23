@@ -12,7 +12,6 @@ public interface ISettingsService
 public partial class Options : ObservableObject
 {
     [ObservableProperty] private DatabaseOptions _database = new();
-    [ObservableProperty] private string? _exportDirectory = "Export";
     [ObservableProperty] private LoggingOptions _logging = new();
     
     public partial class DatabaseOptions : ObservableObject
