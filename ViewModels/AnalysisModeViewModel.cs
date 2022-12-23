@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using esquire.Data.Fusion;
 using esquire.Services;
+using esquire.Services.Export;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

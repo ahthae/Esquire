@@ -1,4 +1,4 @@
-namespace esquire.Services;
+namespace esquire.Services.Export;
 
 public class ExcelExportService
 {

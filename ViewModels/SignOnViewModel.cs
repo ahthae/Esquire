@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using esquire.Services;
 using esquire.Services.Settings;
+using Options = esquire.Services.Settings.Options;
 
 namespace esquire.ViewModels;
 

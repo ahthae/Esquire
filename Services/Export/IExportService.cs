@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace esquire.Services;
+namespace esquire.Services.Export;
 
 public interface IExportService
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.Messaging;
+using esquire.Services;
 using esquire.Services.Settings;
 using Microsoft.Extensions.DependencyInjection;
 

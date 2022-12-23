@@ -5,6 +5,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using esquire.Data.Fusion;
 using esquire.Services;
+using esquire.Services.Export;
 using esquire.Services.Settings;
 using esquire.ViewModels;
 using esquire.Views;

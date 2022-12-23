@@ -6,11 +6,12 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using esquire.Services.Settings;
 
-namespace esquire.Services;
+namespace esquire.Services.Export;
 
 public class CsvExportService : ExportServiceBase
 {
     private CsvConfiguration _configuration;
+    
     public CsvExportService(ISettingsService settingsService) : base(settingsService)
     {
         _configuration = new CsvConfiguration(CultureInfo.InvariantCulture)
