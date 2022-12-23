@@ -34,7 +34,7 @@
 		<Setter Property="Background" Value="#fffefa"/>
 	</Style>
 	<Style Selector="Menu">
-		<Setter Property="Height" Value="20"/>
+		<Setter Property="Height" Value="24"/>
 		<Setter Property="MinHeight" Value="0"/>
 		<Setter Property="Margin" Value="0"/>
 		<Setter Property="Padding" Value="0"/>
@@ -55,7 +55,7 @@
 	<Style Selector="TabControl">
 	</Style>
 	<Style Selector="TabItem">
-		<Setter Property="MinHeight" Value="24"/>
+		<Setter Property="MinHeight" Value="28"/>
 		<Setter Property="FontSize" Value="13"/>
 	</Style>
 	<Style Selector="TreeView">
