@@ -1,34 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using esquire.Services.Settings;
 
 namespace esquire.Services;
 
-public class CSVExportService : ExportServiceBase
+public class CsvExportService : ExportServiceBase
 {
-    private List<string> _output = new();
     private ISettingsService _settingsService;
     
-    public CSVExportService(ISettingsService settingsService) : base(settingsService)
+    public CsvExportService(ISettingsService settingsService) : base(settingsService)
     {
         _settingsService = settingsService;
     }
 
-    public override void Export<T>(IEnumerable<T> data, string fileName)
+    public override void Export(IEnumerable data, string exportPath)
     {
+        List<string> output = new();
+        
+        //TODO headers
+        
         foreach (var i in data)
         {
             string row = "";
             foreach (var p in i.GetType().GetProperties())
             {
-                row += $"{p.Name},";
+                row += $"{p.GetValue(i)},"; //TODO Handle comma delimiter sanitation (or just all CSV delimiting (or even ExportService delimiting helper functions)
             }
-            _output.Add(row);
+            output.Add(row);
         }
 
-        File.WriteAllLines(Path.Join(_settingsService.Settings.ExportDirectory, fileName), _output);
+        string? directory = Path.GetDirectoryName(exportPath);
+        if (directory is not null && !Directory.Exists(directory)) Directory.CreateDirectory(directory); //TODO
+        File.WriteAllLinesAsync(exportPath, output);
     }
 }

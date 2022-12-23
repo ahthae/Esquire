@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using esquire.Data.Fusion;
+using esquire.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,6 +29,22 @@ public partial class AnalysisModeViewModel : ViewModelBase
     {
         ServiceProvider = serviceProvider;
         WeakReferenceMessenger.Default.Register<DataQueryMessage>(this, (recipient, message) => RunQuery(message.Value, message.UserId));
+    }
+
+    public void ExportData()
+    {
+        CsvExportService exportService = ServiceProvider.GetService<CsvExportService>();
+        if (exportService is not null)
+        {
+            try
+            {
+                exportService.Export(_data, "Export/data.csv");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Export error: {ex.GetType()}: {ex.Message}");
+            }
+        }
     }
 
     public void ShowDatabaseDialog()
@@ -74,6 +91,7 @@ public partial class AnalysisModeViewModel : ViewModelBase
                                       DateTo = hou.DateTo
                                   }).OrderBy(u => u.OrgName).ToListAsync();
                     break;
+                
                 case "All Business Units for This User":
                     Data = await (from fabu in db.FunAllBusinessUnitsVs
                                   join furda in db.FunUserRoleDataAsgnmnts.Where(furda => furda.ActiveFlag == "Y")

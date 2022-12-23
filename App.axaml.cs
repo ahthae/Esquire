@@ -46,6 +46,7 @@ public partial class App : Application
         services.AddTransient<AnalysisModeUserDialogViewModel>();
 
         services.AddSingleton<ISettingsService, SettingsService>();
+        services.AddSingleton<CsvExportService>();
         
         services.AddScoped<IDatabaseService, DatabaseService>();
         services.AddDbContext<FusionContext>((serviceProvider, options) => {

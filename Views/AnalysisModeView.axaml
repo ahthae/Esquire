@@ -36,11 +36,16 @@
 							</TreeViewItem>
 						</TreeView>
 						<GridSplitter Grid.Column="1"/>
-						<Panel Grid.Column="2">
-							<DataGrid CanUserResizeColumns="True"
-									  AutoGenerateColumns="True" 
-									  Items="{Binding Data}"/>
-						</Panel>
+						<DockPanel Grid.Column="2">
+							<Panel DockPanel.Dock="Top">
+								<Button Content="Export" Command="{Binding ExportData}"/>
+							</Panel>
+							<Panel>
+								<DataGrid CanUserResizeColumns="True"
+										  AutoGenerateColumns="True" 
+										  Items="{Binding Data}"/>
+							</Panel>
+						</DockPanel>
 					</Grid>
 				</Panel>
 			</TabItem>
