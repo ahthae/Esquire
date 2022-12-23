@@ -20,12 +20,12 @@ public class CsvExportService : ExportServiceBase
         };
     }
 
-    public override void Export(IEnumerable data, string exportPath)
+    public override async void Export(IEnumerable data, string exportPath)
     {
-        using (StreamWriter writer = new StreamWriter(exportPath))
-        using (CsvWriter csv = new CsvWriter(writer, _configuration))
+        await using (StreamWriter writer = new StreamWriter(exportPath))
+        await using (CsvWriter csv = new CsvWriter(writer, _configuration))
         {
-            csv.WriteRecordsAsync(data);
+            await csv.WriteRecordsAsync(data);
         }
     }
 }
