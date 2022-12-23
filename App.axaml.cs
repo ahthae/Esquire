@@ -53,7 +53,7 @@ public partial class App : Application
             DbConnection connection = db.GetConnection();
             Console.WriteLine(connection.ConnectionString);
             options.UseOracle(connection);
-        });
+        }, ServiceLifetime.Transient);
 
     return services.BuildServiceProvider();
     }

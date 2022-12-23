@@ -29,7 +29,7 @@ public partial class AnalysisModeUserDialogWindow : Window
         {
             var viewModel = DataContext as AnalysisModeUserDialogViewModel;
             if (viewModel?.SelectedUser is not null)
-                Close(viewModel.SelectedUser.Username);
+                Close(viewModel.SelectedUser.UserId);
             else
                 Close();
         });

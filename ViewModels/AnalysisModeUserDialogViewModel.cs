@@ -33,7 +33,7 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
 
         SelectedUser = new UserDialogUser()
         {
-            Username  = "",
+            Username = "",
             UserGuid = "Loading users please wait",
             UserId = 0
         };
@@ -46,7 +46,7 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error querying database for users {ex.Message}");
+                Console.WriteLine($"Error querying database for users {ex.Message}"); //TODO
             }
         });
         PopulateUsers = PopulateUsersAsync;
@@ -57,7 +57,7 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
 
     private async Task<IEnumerable<object>> PopulateUsersAsync(string? text, CancellationToken token)
     {
-        return from user in Users.Where(user => user.Username is not null ? user.Username.Contains(text ?? "") : false )
+        return from user in Users.Where(user => user.Username is not null ? user.Username.Contains(text ?? "", StringComparison.OrdinalIgnoreCase) : false )
             select user;
     }
 
@@ -68,6 +68,7 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
             FusionContext? db = _serviceProvider.GetService<FusionContext>();
             Users = new ObservableCollection<UserDialogUser>(
                 from user in db!.PerUsers.Where(user => user.ActiveFlag == "Y")
+                                         .Select(u => new { u.Username, u.UserGuid, u.UserId})
                 select new UserDialogUser()
                 {
                     Username = user.Username,
