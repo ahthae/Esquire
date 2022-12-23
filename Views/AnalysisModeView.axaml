@@ -17,6 +17,10 @@
 			</MenuItem>
 		</Menu>
 		
+		<Panel DockPanel.Dock="Bottom">
+			<TextBlock Text="{Binding InfoText}"/>
+		</Panel>
+		
 		<TabControl>
 			<TabItem Header="System Configuration"/>
 			<TabItem Header="Foundation" IsSelected="True">

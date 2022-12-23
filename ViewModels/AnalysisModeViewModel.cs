@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using esquire.Data.Fusion;
@@ -17,25 +18,16 @@ public class DataQueryMessage : ValueChangedMessage<string>
 }
 public class ShowUserDialogMessage : AsyncRequestMessage<IEnumerable> { }
 
-public class AnalysisModeViewModel : ViewModelBase
+public partial class AnalysisModeViewModel : ViewModelBase
 {
     public readonly IServiceProvider ServiceProvider;
-    private IEnumerable _data;
+    [ObservableProperty] private IEnumerable _data;
+    [ObservableProperty] private string? _infoText;
     
     public AnalysisModeViewModel(IServiceProvider serviceProvider)
     {
         ServiceProvider = serviceProvider;
-        WeakReferenceMessenger.Default.Register<DataQueryMessage>(this, (recipient, message) => 
-        {
-            try
-            {
-                RunQueryAsync(message.Value, message.UserId);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to query database: {ex.Message}");
-            }
-        });
+        WeakReferenceMessenger.Default.Register<DataQueryMessage>(this, (recipient, message) => RunQuery(message.Value, message.UserId));
     }
 
     public void ShowDatabaseDialog()
@@ -43,15 +35,22 @@ public class AnalysisModeViewModel : ViewModelBase
         WeakReferenceMessenger.Default.Send<ShowDatabaseSettingsDialogMessage>();
     }
 
-    public IEnumerable Data
+    public async void RunQuery(string query, decimal? userId = null) //Defined as an async method and not as a lambda to the DataQuerryMessage to catch exceptions
     {
-        get => _data;
-        set => SetProperty(ref _data, value);
+        try
+        {
+            await RunQueryAsync(query, userId);
+        }
+        catch (Exception ex)
+        {
+            InfoText = $"Failed to query database: {ex.Message}";
+            Console.WriteLine(InfoText);
+        }
     }
 
-    public async Task RunQueryAsync(string query, decimal? userId = null)
+    private async Task RunQueryAsync(string query, decimal? userId = null)
     {
-        _ = Task.Run(async () =>
+        await Task.Run(async () =>
         {
             FusionContext db = ServiceProvider.GetService<FusionContext>();
             switch (query)
