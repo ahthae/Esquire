@@ -20,9 +20,9 @@
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             
-            <Button HorizontalAlignment="Left" Grid.Column="0" Command="{Binding TestConnection}">Test</Button>
-            <Button HorizontalAlignment="Right" Grid.Column="1" Command="{Binding Confirm}">Confirm</Button>
-            <Button HorizontalAlignment="Right" Grid.Column="2" Command="{Binding Cancel}">Cancel</Button>
+            <Button HorizontalAlignment="Left" Grid.Column="0" Command="{Binding OnTestConnection}">Test</Button>
+            <Button HorizontalAlignment="Right" Grid.Column="1" Command="{Binding OnConfirm}">Confirm</Button>
+            <Button HorizontalAlignment="Right" Grid.Column="2" Command="{Binding OnCancel}">Cancel</Button>
         </Grid>
         <TextBlock DockPanel.Dock="Bottom" Text="{Binding ConnectionTestResult}"/>
         

@@ -24,18 +24,18 @@ public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
     }
 
     [RelayCommand]
-    public void Confirm()
+    public void OnConfirm()
     {
         SaveSettings();
         Close<DatabaseSettingsDialogViewModel>();
     }
     [RelayCommand]
-    public void Cancel()
+    public void OnCancel()
     {
         Close<DatabaseSettingsDialogViewModel>();
     }
     [RelayCommand]
-    public async Task<bool> TestConnection()
+    public async Task<bool> OnTestConnection()
     {
         try
         {
