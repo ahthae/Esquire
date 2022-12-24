@@ -3,12 +3,15 @@ using System.Data.Common;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using esquire.Data.Fusion;
 using esquire.Services;
 using esquire.Services.Export;
 using esquire.Services.Settings;
 using esquire.ViewModels;
 using esquire.Views;
+using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.Avalonia;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -46,6 +49,10 @@ public partial class App : Application
         services.AddTransient<DatabaseModeViewModel>();
         services.AddTransient<AnalysisModeViewModel>();
         services.AddTransient<AnalysisModeUserDialogViewModel>();
+
+        services.AddSingleton<IDialogService>(new DialogService(
+            new DialogManager(viewLocator: new ViewLocator()),
+            viewModelFactory: x => App.Current!.Services.GetService(x)));
 
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<CsvExportService>();
