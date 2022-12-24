@@ -4,11 +4,10 @@ using esquire.ViewModels;
 
 namespace esquire.Views;
 
-public abstract class DialogBase<T> : Window where T : ViewModelBase
+public abstract class DialogBase<T> : WindowBase<T> where T : ViewModelBase
 {
-    public DialogBase()
+    protected DialogBase()
     {
-        DataContext = App.Current.Services.GetService(typeof(T));
         WeakReferenceMessenger.Default.Register<CloseMessage<T>>(this, CloseHandler);
     }
 
