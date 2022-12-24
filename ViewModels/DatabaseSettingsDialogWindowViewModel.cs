@@ -34,20 +34,13 @@ public partial class DatabaseSettingsDialogWindowViewModel : ViewModelBase
     {
         Close<DatabaseSettingsDialogWindowViewModel>();
     }
-
+    [RelayCommand]
     public async Task<bool> TestConnection()
     {
         try
         {
-            return await Task.Run(() =>
-            {
-                DbConnection connection = _databaseService.GetConnection();
-                connection.Open();
-                connection.Close();
-                ConnectionTestResult = "Connection test successful!";
-                Console.WriteLine(ConnectionTestResult);
-                return true;
-            });
+            await Task.Run(TestDatabaseConnection);
+            return true;
         }
         catch (Exception ex)
         {
@@ -55,6 +48,15 @@ public partial class DatabaseSettingsDialogWindowViewModel : ViewModelBase
             Console.WriteLine(ConnectionTestResult);
             return false;
         }
+    }
+
+    private void TestDatabaseConnection()
+    {
+        DbConnection connection = _databaseService.GetConnection();
+        connection.Open();
+        connection.Close();
+        ConnectionTestResult = "Connection test successful!";
+        Console.WriteLine(ConnectionTestResult);
     }
     
     private void SaveSettings()
