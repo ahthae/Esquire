@@ -3,11 +3,14 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using esquire.Services;
 using esquire.Services.Settings;
 using Options = esquire.Services.Settings.Options;
 
 namespace esquire.ViewModels;
+
+public class DatabaseSettingsDialogCloseMessage : DialogCloseMessage { }
 
 public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
 {
@@ -16,7 +19,7 @@ public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
     [ObservableProperty] private Options _settings;
     [ObservableProperty] private string _connectionTestResult;
 
-    public DatabaseSettingsDialogViewModel(ISettingsService settingsService, IDatabaseService databaseService)
+    public DatabaseSettingsDialogViewModel(ISettingsService settingsService, IDatabaseService databaseService) 
     {
         _databaseService = databaseService;
         _settingsService = settingsService;
@@ -27,12 +30,12 @@ public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
     public void OnConfirm()
     {
         SaveSettings();
-        Close<DatabaseSettingsDialogViewModel>();
+        SendCloseMessage();
     }
     [RelayCommand]
     public void OnCancel()
     {
-        Close<DatabaseSettingsDialogViewModel>();
+        SendCloseMessage();
     }
     [RelayCommand]
     public async Task<bool> OnTestConnection()
@@ -63,5 +66,10 @@ public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
     {
         _settingsService.Settings = Settings;
         _settingsService.Write();
+    }
+
+    protected override void SendCloseMessage()
+    {
+        WeakReferenceMessenger.Default.Send<DatabaseSettingsDialogCloseMessage>();
     }
 }

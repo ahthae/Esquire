@@ -27,7 +27,7 @@ namespace esquire.Views
             //TODO find a better way to reference the parent Window
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                decimal? userId = await new AnalysisModeUserDialogWindow()
+                decimal? userId = await new AnalysisModeUserDialog()
                 {
                     DataContext = (DataContext as AnalysisModeViewModel).ServiceProvider.GetService<AnalysisModeUserDialogViewModel>(),
                     Topmost = true

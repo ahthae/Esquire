@@ -5,16 +5,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.Data.Fusion;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.ViewModels;
 
+public class AnalysisModeUserDialogCloseMessage : DialogCloseMessage {}
 public class GetDatabaseUsersMessage { }
 public class ConfirmDatabaseUserMessage { }
 
-public partial class AnalysisModeUserDialogViewModel : ViewModelBase
+public partial class AnalysisModeUserDialogViewModel : DialogViewModelBase
 {
     public class UserDialogUser
     {
@@ -27,7 +29,7 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
     [ObservableProperty] private ObservableCollection<UserDialogUser> _users;
     [ObservableProperty] private UserDialogUser? _selectedUser;
 
-    public AnalysisModeUserDialogViewModel(IServiceProvider serviceProvider)
+    public AnalysisModeUserDialogViewModel(IServiceProvider serviceProvider) 
     {
         _serviceProvider = serviceProvider;
 
@@ -52,7 +54,10 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
         PopulateUsers = PopulateUsersAsync;
     }
 
-    public void OnConfirmCommand() => WeakReferenceMessenger.Default.Send(new ConfirmDatabaseUserMessage());
+    [RelayCommand]
+    public void OnConfirm() => WeakReferenceMessenger.Default.Send(new ConfirmDatabaseUserMessage());
+    [RelayCommand]
+    public void OnCancel() => SendCloseMessage();
     public Func<string?,CancellationToken,Task<IEnumerable<object>>> PopulateUsers { get; }
 
     private async Task<IEnumerable<object>> PopulateUsersAsync(string? text, CancellationToken token)
@@ -78,4 +83,10 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
             SelectedUser = null;
         });
     }
+
+    protected override void SendCloseMessage()
+    {
+        WeakReferenceMessenger.Default.Send<AnalysisModeUserDialogCloseMessage>();
+    }
+
 }

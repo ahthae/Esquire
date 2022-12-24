@@ -1,6 +1,5 @@
 using System;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.ViewModels;
@@ -11,6 +10,8 @@ public partial class AnalysisModeUserDialog : DialogBase<AnalysisModeViewModel>
 {
     public AnalysisModeUserDialog()
     {
+        WeakReferenceMessenger.Default.Register<AnalysisModeUserDialogCloseMessage>(this, DialogCloseMessageHandler);
+        
         InitializeComponent();
 #if DEBUG
         this.AttachDevTools();

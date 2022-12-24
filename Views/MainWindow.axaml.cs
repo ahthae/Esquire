@@ -19,7 +19,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
     private async void ShowUserDialogHandler(object? receiver, ShowUserDialogMessage message)
     {
         Show();
-        message.Reply(await new AnalysisModeUserDialogWindow().ShowDialog<string>(this));
+        message.Reply(await new AnalysisModeUserDialog().ShowDialog<string>(this));
     }
     
     private void OpenDialog(object? recipient, OpenDialogMessage message)

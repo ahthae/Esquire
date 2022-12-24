@@ -3,16 +3,13 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace esquire.ViewModels;
 
-public class CloseMessage<T> { }
-public class CloseRequestMessage<T> : RequestMessage<T>  { }
-public class CloseCollectionRequestMessage<T> : CollectionRequestMessage<T>  { }
-public class AsyncCloseRequestMessage<T> : AsyncRequestMessage<T> { }
-public class AsyncCloseCollectionRequestMessage<T> : AsyncCollectionRequestMessage<T> { }
+public class DialogCloseMessage { }
+public class DialogCloseRequestMessage<T> : RequestMessage<T>  { }
+public class DialogCloseCollectionRequestMessage<T> : CollectionRequestMessage<T>  { }
+public class AsyncDialogCloseRequestMessage<T> : AsyncRequestMessage<T> { }
+public class AsyncDialogCloseCollectionRequestMessage<T> : AsyncCollectionRequestMessage<T> { }
 
-public class DialogViewModelBase : ViewModelBase
+public abstract class DialogViewModelBase : ViewModelBase
 {
-    protected void Close<T>()
-    {
-        WeakReferenceMessenger.Default.Send<CloseMessage<T>>();
-    }
+    protected abstract void SendCloseMessage();
 }
