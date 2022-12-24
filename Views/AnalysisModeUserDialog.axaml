@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:esquire.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="esquire.Views.AnalysisModeUserDialogWindow"
+        x:Class="esquire.Views.AnalysisModeUserDialog"
         Title="AnalysisModeUserDialog"
         Opened="OnInitialized">
 	<Design.DataContext>

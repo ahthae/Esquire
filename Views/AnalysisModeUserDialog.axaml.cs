@@ -7,9 +7,9 @@ using esquire.ViewModels;
 
 namespace esquire.Views;
 
-public partial class AnalysisModeUserDialogWindow : WindowBase<AnalysisModeViewModel>
+public partial class AnalysisModeUserDialog : DialogBase<AnalysisModeViewModel>
 {
-    public AnalysisModeUserDialogWindow()
+    public AnalysisModeUserDialog()
     {
         InitializeComponent();
 #if DEBUG
