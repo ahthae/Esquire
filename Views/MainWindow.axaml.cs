@@ -11,15 +11,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
     {
         InitializeComponent();
         
-        WeakReferenceMessenger.Default.Register<ShowUserDialogMessage>(this, ShowUserDialogHandler);
-        
         WeakReferenceMessenger.Default.Register<OpenDialogMessage>(this, OpenDialog);
-    }
-
-    private async void ShowUserDialogHandler(object? receiver, ShowUserDialogMessage message)
-    {
-        Show();
-        message.Reply(await new AnalysisModeUserDialog().ShowDialog<string>(this));
     }
     
     private void OpenDialog(object? recipient, OpenDialogMessage message)

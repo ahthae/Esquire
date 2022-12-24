@@ -6,13 +6,13 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.Views
 {
     public partial class AnalysisModeView : UserControl
     {
-        private IServiceProvider _serviceProvider;
+        private readonly string _dialogIdentifier = "QueryDialog";
+        
         public AnalysisModeView()
         {
             InitializeComponent();
@@ -24,21 +24,19 @@ namespace esquire.Views
         }
         private async void NavigationTreeView_DoubleTapWithUser(object? sender, RoutedEventArgs e)
         {
-            //TODO find a better way to reference the parent Window
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
+            
+            var dialogVm = (AnalysisModeUserDialogViewModel?)App.Current!.Services.GetService(typeof(AnalysisModeUserDialogViewModel));
+            if (dialogVm is null) Console.WriteLine("Error retrieving data: unable to create dialog");
             {
-                decimal? userId = await new AnalysisModeUserDialog()
-                {
-                    DataContext = (DataContext as AnalysisModeViewModel).ServiceProvider.GetService<AnalysisModeUserDialogViewModel>(),
-                    Topmost = true
-                }.ShowDialog<decimal>(desktop.MainWindow);
+                decimal? userId = (decimal?)await DialogHost.DialogHost.Show(dialogVm!, _dialogIdentifier);
                 if (userId is not null) SendDataQueryMessage(sender as TreeViewItem, userId);
             }
         }
 
-        private void SendDataQueryMessage(HeaderedItemsControl? sender, decimal? userId = null)
+        private void SendDataQueryMessage(HeaderedItemsControl? sender, decimal? userId = null) //TODO more generic way of passing query parameters
         {
-            WeakReferenceMessenger.Default.Send(new DataQueryMessage((sender)?.Header.ToString() ?? "", userId));
+            WeakReferenceMessenger.Default.Send(new DataQueryMessage(sender?.Header.ToString() ?? "", userId));
         }
     }
 }
