@@ -4,11 +4,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:esquire.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="esquire.SignOnWindow"
-        Title="SignOnWindow">
+        x:Class="esquire.DatabaseSettingsDialogWindow"
+        Title="Database Settings"
+        Topmost="True">
      
 	<Design.DataContext>
-		<viewModels:SignOnViewModel/>
+		<viewModels:DatabaseSettingsDialogWindowViewModel/>
 	</Design.DataContext>
     
     <DockPanel Margin="10">
@@ -20,8 +21,8 @@
             </Grid.ColumnDefinitions>
             
             <Button HorizontalAlignment="Left" Grid.Column="0" Command="{Binding TestConnection}">Test</Button>
-            <Button HorizontalAlignment="Right" Grid.Column="1" Click="Button_OnClick" Command="{Binding SaveSettings}">Confirm</Button>
-            <Button HorizontalAlignment="Right" Grid.Column="2" Click="Button_OnClick">Cancel</Button>
+            <Button HorizontalAlignment="Right" Grid.Column="1" Command="{Binding Confirm}">Confirm</Button>
+            <Button HorizontalAlignment="Right" Grid.Column="2" Command="{Binding Cancel}">Cancel</Button>
         </Grid>
         <TextBlock DockPanel.Dock="Bottom" Text="{Binding ConnectionTestResult}"/>
         

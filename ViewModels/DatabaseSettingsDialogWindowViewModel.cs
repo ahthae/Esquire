@@ -1,36 +1,38 @@
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using esquire.Services;
 using esquire.Services.Settings;
 using Options = esquire.Services.Settings.Options;
 
 namespace esquire.ViewModels;
 
-public class SignOnViewModel : ViewModelBase
+public partial class DatabaseSettingsDialogWindowViewModel : ViewModelBase
 {
     private readonly ISettingsService _settingsService;
     private readonly IDatabaseService _databaseService;
-    private Options _settings;
-    private string _connectionTestResult;
+    [ObservableProperty] private Options _settings;
+    [ObservableProperty] private string _connectionTestResult;
 
-    public SignOnViewModel(ISettingsService settingsService, IDatabaseService databaseService)
+    public DatabaseSettingsDialogWindowViewModel(ISettingsService settingsService, IDatabaseService databaseService)
     {
         _databaseService = databaseService;
         _settingsService = settingsService;
         _settings = settingsService.Settings;
     }
 
-    public Options Settings
+    [RelayCommand]
+    public void Confirm()
     {
-        get => _settings;
-        set => SetProperty(ref _settings, value);
+        SaveSettings();
+        Close<DatabaseSettingsDialogWindowViewModel>();
     }
-
-    public string ConnectionTestResult
+    [RelayCommand]
+    public void Cancel()
     {
-        get => _connectionTestResult;
-        set => SetProperty(ref _connectionTestResult, value);
+        Close<DatabaseSettingsDialogWindowViewModel>();
     }
 
     public async Task<bool> TestConnection()
@@ -55,7 +57,7 @@ public class SignOnViewModel : ViewModelBase
         }
     }
     
-    public void SaveSettings()
+    private void SaveSettings()
     {
         _settingsService.Settings = Settings;
         _settingsService.Write();

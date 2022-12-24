@@ -23,24 +23,25 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var services = ConfigureServices();
+        ConfigureServices();
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow(services)
-            {
-                DataContext = services.GetService<MainWindowViewModel>()
-            };
+            desktop.MainWindow = new MainWindow();
         }
 
         base.OnFrameworkInitializationCompleted();
     }
+    
+    public static App? Current => (App?)Application.Current;
+    
+    public IServiceProvider Services { get; private set; }
 
-    public IServiceProvider ConfigureServices()
+    public void ConfigureServices()
     {
         var services = new ServiceCollection();
 
-        services.AddTransient<SignOnViewModel>();
+        services.AddTransient<DatabaseSettingsDialogWindowViewModel>();
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<DatabaseModeViewModel>();
         services.AddTransient<AnalysisModeViewModel>();
@@ -57,6 +58,6 @@ public partial class App : Application
             options.UseOracle(connection);
         }, ServiceLifetime.Transient);
 
-    return services.BuildServiceProvider();
+        Services = services.BuildServiceProvider();
     }
 }

@@ -1,14 +1,15 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using esquire.ViewModels;
+using esquire.Views;
 
 namespace esquire;
 
-public partial class SignOnWindow : Window
+public partial class DatabaseSettingsWindow : WindowBase<DatabaseSettingsDialogWindowViewModel>
 {
-    public SignOnWindow(IServiceProvider services)
+    public DatabaseSettingsWindow()
     {
         InitializeComponent();
 #if DEBUG
@@ -19,10 +20,5 @@ public partial class SignOnWindow : Window
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
-    }
-
-    private void Button_OnClick(object? sender, RoutedEventArgs e)
-    {
-        Close();
     }
 }
