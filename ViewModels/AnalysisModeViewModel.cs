@@ -3,10 +3,10 @@ using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using esquire.Data.Fusion;
-using esquire.Services;
 using esquire.Services.Export;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,9 +48,10 @@ public partial class AnalysisModeViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
     public void ShowDatabaseDialog()
     {
-        WeakReferenceMessenger.Default.Send<ShowDatabaseSettingsDialogMessage>();
+        OpenDialog<DatabaseSettingsDialogViewModel>();
     }
 
     public async void RunQuery(string query, decimal? userId = null) //Defined as an async method and not as a lambda to the DataQuerryMessage to catch exceptions

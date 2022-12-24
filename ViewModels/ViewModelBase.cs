@@ -1,22 +1,22 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace esquire.ViewModels;
 
+public class OpenDialogMessage
+{
+    public Type ViewModelType { get; set; }
+    public OpenDialogMessage(Type viewModelType) => ViewModelType= viewModelType;
+}
 // T = view model of dialog to open
-public class OpenDialogMessage<T> where T : ViewModelBase { }
-
-public class CloseMessage<T> { }
-public class CloseRequestMessage<T> : RequestMessage<T>  { }
-public class CloseCollectionRequestMessage<T> : CollectionRequestMessage<T>  { }
-public class AsyncCloseRequestMessage<T> : AsyncRequestMessage<T> { }
-public class AsyncCloseCollectionRequestMessage<T> : AsyncCollectionRequestMessage<T> { }
+// R = return type of dialog
+public class OpenDialogMessage<T, R> where T : ViewModelBase { }
 
 public abstract class ViewModelBase : ObservableRecipient
 {
-    protected void Close<T>()
+    protected void OpenDialog<T>() where T : ViewModelBase
     {
-        WeakReferenceMessenger.Default.Send<CloseMessage<T>>();
+        WeakReferenceMessenger.Default.Send(new OpenDialogMessage(typeof(T)));
     }
 }

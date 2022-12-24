@@ -9,14 +9,14 @@ using Options = esquire.Services.Settings.Options;
 
 namespace esquire.ViewModels;
 
-public partial class DatabaseSettingsDialogWindowViewModel : ViewModelBase
+public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
 {
     private readonly ISettingsService _settingsService;
     private readonly IDatabaseService _databaseService;
     [ObservableProperty] private Options _settings;
     [ObservableProperty] private string _connectionTestResult;
 
-    public DatabaseSettingsDialogWindowViewModel(ISettingsService settingsService, IDatabaseService databaseService)
+    public DatabaseSettingsDialogViewModel(ISettingsService settingsService, IDatabaseService databaseService)
     {
         _databaseService = databaseService;
         _settingsService = settingsService;
@@ -27,12 +27,12 @@ public partial class DatabaseSettingsDialogWindowViewModel : ViewModelBase
     public void Confirm()
     {
         SaveSettings();
-        Close<DatabaseSettingsDialogWindowViewModel>();
+        Close<DatabaseSettingsDialogViewModel>();
     }
     [RelayCommand]
     public void Cancel()
     {
-        Close<DatabaseSettingsDialogWindowViewModel>();
+        Close<DatabaseSettingsDialogViewModel>();
     }
     [RelayCommand]
     public async Task<bool> TestConnection()

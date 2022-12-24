@@ -10,14 +10,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
     {
         InitializeComponent();
         
-        WeakReferenceMessenger.Default.Register<ShowDatabaseSettingsDialogMessage>(this, ShowDatabaseSettingsDialogHandler);
         WeakReferenceMessenger.Default.Register<ShowUserDialogMessage>(this, ShowUserDialogHandler);
-    }
-
-    private void ShowDatabaseSettingsDialogHandler(object? receiver, ShowDatabaseSettingsDialogMessage? message)
-    {
-        Show(); // Sometimes this handler is called while the window is hidden, and Avalonia throws an exception when showing a dialog from a hidden window
-        new DatabaseSettingsWindow().ShowDialog(this);
     }
 
     private async void ShowUserDialogHandler(object? receiver, ShowUserDialogMessage? message)

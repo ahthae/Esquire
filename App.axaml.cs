@@ -41,7 +41,7 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
-        services.AddTransient<DatabaseSettingsDialogWindowViewModel>();
+        services.AddTransient<DatabaseSettingsDialogViewModel>();
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<DatabaseModeViewModel>();
         services.AddTransient<AnalysisModeViewModel>();

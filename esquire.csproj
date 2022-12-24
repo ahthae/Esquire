@@ -50,7 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\DatabaseSettingsDialogWindow.axaml.cs">
+    <Compile Update="Views\DatabaseSettingsDialogView.axaml.cs">
       <DependentUpon>SignonWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

@@ -5,11 +5,11 @@ using Avalonia.Markup.Xaml;
 using esquire.ViewModels;
 using esquire.Views;
 
-namespace esquire;
+namespace esquire.Views;
 
-public partial class DatabaseSettingsWindow : WindowBase<DatabaseSettingsDialogWindowViewModel>
+public partial class DatabaseSettingsDialogView : DialogBase<DatabaseSettingsDialogViewModel>
 {
-    public DatabaseSettingsWindow()
+    public DatabaseSettingsDialogView()
     {
         InitializeComponent();
 #if DEBUG

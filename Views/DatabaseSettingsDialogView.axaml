@@ -4,12 +4,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:esquire.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="esquire.DatabaseSettingsDialogWindow"
+        x:Class="esquire.Views.DatabaseSettingsDialogView"
         Title="Database Settings"
         Topmost="True">
      
 	<Design.DataContext>
-		<viewModels:DatabaseSettingsDialogWindowViewModel/>
+		<viewModels:DatabaseSettingsDialogViewModel/>
 	</Design.DataContext>
     
     <DockPanel Margin="10">
