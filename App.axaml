@@ -10,6 +10,5 @@
         <FluentTheme Mode="Light"/>
         <StyleInclude Source="avares://DialogHost.Avalonia/Styles.xaml"/>
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
-        <StyleInclude Source="/Views/Styles.axaml"/>
     </Application.Styles>
 </Application>
