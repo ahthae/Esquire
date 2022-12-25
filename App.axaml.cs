@@ -33,7 +33,7 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
     
-    public static new App? Current => (App?)Application.Current;
+    public new static App? Current => (App?)Application.Current;
 
     public IServiceProvider Services { get; private set; }
 

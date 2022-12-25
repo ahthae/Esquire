@@ -8,12 +8,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.Data.Fusion;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.ViewModels;
 
 public class AnalysisModeUserDialogCloseMessage : DialogCloseMessage {}
-public class GetDatabaseUsersMessage { }
 public class ConfirmDatabaseUserMessage { }
 
 public partial class AnalysisModeUserDialogViewModel : ViewModelBase
@@ -38,8 +38,6 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
             UserId = 0
         };
 
-        WeakReferenceMessenger.Default.Register<GetDatabaseUsersMessage>(this, (r, m) => GetDatabaseUsersAsync());
-        
         PopulateUsers = PopulateUsersAsync;
     }
     
@@ -55,26 +53,26 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
             select user;
     }
 
-    private async Task GetDatabaseUsersAsync() //TODO find out why this runs twice
+    public async Task UpdateDatabaseUsersAsync()
     {
         try
         {
-            Users = await Task.Run(() =>
-            {
-                Console.WriteLine("Fetching");
-                FusionContext? db = App.Current!.Services.GetService<FusionContext>();
-
-                return new ObservableCollection<UserDialogUser>(
-                    db!.PerUsers
-                        .Where(user => user.ActiveFlag == "Y")
-                        .Select(u => new UserDialogUser{ Username = u.Username, UserGuid = u.UserGuid, UserId = u.UserId }).ToList());
-            });
-            
+            Users = await QueryDatabaseUsersAsync();
             SelectedUser = null;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error querying database for users {ex.Message}\n{ex.StackTrace}"); //TODO
+            Console.WriteLine($"Error querying database for users {ex.Message}\n{ex.StackTrace}"); //TODO show is UI
         }
+    }
+
+    private static async Task<ObservableCollection<UserDialogUser>> QueryDatabaseUsersAsync()
+    {
+            FusionContext? db = App.Current!.Services.GetService<FusionContext>();
+            var users = db!.PerUsers
+                                       .Where(user => user.ActiveFlag == "Y")
+                                       .Select(u => new UserDialogUser{ Username = u.Username, UserGuid = u.UserGuid, UserId = u.UserId })
+                                       .ToListAsync();
+            return new ObservableCollection<UserDialogUser>(await users);
     }
 }
