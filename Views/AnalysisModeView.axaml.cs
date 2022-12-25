@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using Avalonia.Threading;
 using esquire.ViewModels;
 
 namespace esquire.Views
@@ -44,7 +42,7 @@ namespace esquire.Views
         private void CloseOpenDialog(string identifier)
         {
             var dialog = DialogHost.DialogHost.GetDialogSession(identifier);
-            if (DialogHost.DialogHost.IsDialogOpen(identifier)) dialog.Close();
+            if (DialogHost.DialogHost.IsDialogOpen(identifier)) dialog?.Close();
         }
     }
 }

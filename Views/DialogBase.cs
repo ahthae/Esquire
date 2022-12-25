@@ -1,4 +1,3 @@
-using Avalonia.Controls;
 using esquire.ViewModels;
 
 namespace esquire.Views;
