@@ -8,7 +8,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.Data.Fusion;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.ViewModels;
@@ -26,7 +25,7 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
         public decimal? UserId { get; set; }
     }
     
-    [ObservableProperty] private ObservableCollection<UserDialogUser> _users;
+    [ObservableProperty] private ObservableCollection<UserDialogUser>? _users;
     [ObservableProperty] private UserDialogUser? _selectedUser;
 
     public AnalysisModeUserDialogViewModel() 

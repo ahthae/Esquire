@@ -1,10 +1,10 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using CommunityToolkit.Mvvm.Messaging;
+using Avalonia.Threading;
 using esquire.ViewModels;
 
 namespace esquire.Views
@@ -32,9 +32,11 @@ namespace esquire.Views
             }
         }
 
-        private void SendDataQueryMessage(HeaderedItemsControl? sender, decimal? userId = null) //TODO more generic way of passing query parameters
+        private async void SendDataQueryMessage(HeaderedItemsControl? sender, decimal? userId = null) //TODO more generic way of passing query parameters
         {
-            WeakReferenceMessenger.Default.Send(new DataQueryMessage(sender?.Header.ToString() ?? "", userId));
+            AnalysisModeViewModel dataContext = (AnalysisModeViewModel?)DataContext;
+            string queryType = sender.Header as string;
+            await Task.Run(async () => await dataContext.RunQueryAsync(queryType as string, userId));
         }
     }
 }
