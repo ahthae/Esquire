@@ -5,6 +5,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using esquire.Data.Fusion;
 using esquire.Services;
+using esquire.Services.Export;
 using esquire.Services.Settings;
 using esquire.ViewModels;
 using esquire.Views;
@@ -22,39 +23,43 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var services = ConfigureServices();
+        ConfigureServices();
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow(services)
-            {
-                DataContext = services.GetService<MainWindowViewModel>()
-            };
+            desktop.MainWindow = new MainWindow();
         }
 
         base.OnFrameworkInitializationCompleted();
     }
+    
+    public new static App? Current => (App?)Application.Current;
 
-    public IServiceProvider ConfigureServices()
+    public IServiceProvider Services { get; private set; }
+
+    private void ConfigureServices()
     {
         var services = new ServiceCollection();
 
-        services.AddTransient<SignOnViewModel>();
+        services.AddTransient<DatabaseSettingsDialogViewModel>();
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<DatabaseModeViewModel>();
         services.AddTransient<AnalysisModeViewModel>();
         services.AddTransient<AnalysisModeUserDialogViewModel>();
 
         services.AddSingleton<ISettingsService, SettingsService>();
+        services.AddSingleton<CsvExportService>();
         
         services.AddScoped<IDatabaseService, DatabaseService>();
-        services.AddDbContext<FusionContext>((serviceProvider, options) => {
-            IDatabaseService db = serviceProvider.GetService<IDatabaseService>();
+        services.AddDbContextPool<FusionContext>(options =>
+        {
+            IDatabaseService? db = App.Current.Services.GetService<IDatabaseService>();
             DbConnection connection = db.GetConnection();
             Console.WriteLine(connection.ConnectionString);
+            options.UseModel(Models.Compiled.FusionContextModel.Instance);
             options.UseOracle(connection);
-        }, ServiceLifetime.Transient);
+        });
 
-    return services.BuildServiceProvider();
+        Services = services.BuildServiceProvider();
     }
 }

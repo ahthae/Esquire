@@ -1,40 +1,39 @@
 using System;
-using System.Collections;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.Views;
 
-public partial class MainWindow : Window
+public partial class MainWindow : WindowBase<MainWindowViewModel>
 {
-    private readonly IServiceProvider _serviceProvider;
-    public MainWindow(IServiceProvider serviceProvider)
+    public MainWindow()
     {
         InitializeComponent();
-        _serviceProvider = serviceProvider;
-        WeakReferenceMessenger.Default.Register<ShowDatabaseSettingsDialogMessage>(this, ShowSignOnHandler);
-        WeakReferenceMessenger.Default.Register<ShowUserDialogMessage>(this, ShowUserDialogHandler);
+        
+        WeakReferenceMessenger.Default.Register<OpenDialogMessage>(this, OpenDialog);
     }
-
-    private void ShowSignOnHandler(object? receiver, ShowDatabaseSettingsDialogMessage? message)
-    {
-        Show(); // Sometimes this handler is called while the window is hidden, and Avalonia throws an exception when showing a dialog from a hidden window
-        new SignOnWindow(_serviceProvider)
-        {
-            DataContext = _serviceProvider.GetService<SignOnViewModel>(),
-            Topmost = true
-        }.ShowDialog(this);
-    }
-
-    private async void ShowUserDialogHandler(object? receiver, ShowUserDialogMessage? message)
+    
+    private void OpenDialog(object? recipient, OpenDialogMessage message)
     {
         Show();
-        message.Reply(await new AnalysisModeUserDialogWindow()
+        
+        Type? dialogView = LocateViewFromViewModel(message.ViewModelType);
+        if (dialogView is null)
         {
-            DataContext = _serviceProvider.GetService<AnalysisModeUserDialogViewModel>()
-        }.ShowDialog<string>(this));
+            Console.WriteLine($"Dialog error: unable to find view {message.ViewModelType}");
+            return;
+        }
+        
+        var dialog = Activator.CreateInstance(dialogView)!;
+        
+        ((Window?)dialog)?.ShowDialog(this);
+    }
+
+    private static Type? LocateViewFromViewModel(Type viewModel)
+    {
+        string name = viewModel.FullName!.Replace("ViewModel", "View");
+        Type? view = Type.GetType(name);
+        return view;
     }
 }

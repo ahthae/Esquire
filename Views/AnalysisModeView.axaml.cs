@@ -1,18 +1,16 @@
 using System;
-using Avalonia;
+using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using CommunityToolkit.Mvvm.Messaging;
 using esquire.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.Views
 {
     public partial class AnalysisModeView : UserControl
     {
-        private IServiceProvider _serviceProvider;
+        private readonly string _dialogIdentifier = "QueryDialog";
+        
         public AnalysisModeView()
         {
             InitializeComponent();
@@ -20,25 +18,31 @@ namespace esquire.Views
 
         private void NavigationTreeView_DoubleTap(object? sender, RoutedEventArgs e)
         { 
+            CloseOpenDialog(_dialogIdentifier);
             SendDataQueryMessage(sender as TreeViewItem);
         }
         private async void NavigationTreeView_DoubleTapWithUser(object? sender, RoutedEventArgs e)
-        {
-            //TODO find a better way to reference the parent Window
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                decimal? userId = await new AnalysisModeUserDialogWindow()
-                {
-                    DataContext = (DataContext as AnalysisModeViewModel).ServiceProvider.GetService<AnalysisModeUserDialogViewModel>(),
-                    Topmost = true
-                }.ShowDialog<decimal>(desktop.MainWindow);
-                if (userId is not null) SendDataQueryMessage(sender as TreeViewItem, userId);
-            }
+        {   
+            var dialogVm = (AnalysisModeUserDialogViewModel?)App.Current!.Services.GetService(typeof(AnalysisModeUserDialogViewModel));
+            if (dialogVm is null) Console.WriteLine("Error retrieving data: unable to get dialog content");
+            
+            CloseOpenDialog(_dialogIdentifier);
+            decimal? userId = (decimal?)await DialogHost.DialogHost.Show(dialogVm!, _dialogIdentifier);
+            
+            if (userId is not null) SendDataQueryMessage(sender as TreeViewItem, userId);
         }
 
-        private void SendDataQueryMessage(HeaderedItemsControl? sender, decimal? userId = null)
+        private async void SendDataQueryMessage(HeaderedItemsControl? sender, decimal? userId = null) //TODO more generic way of passing query parameters
         {
-            WeakReferenceMessenger.Default.Send(new DataQueryMessage((sender)?.Header.ToString() ?? "", userId));
+            AnalysisModeViewModel? dataContext = (AnalysisModeViewModel?)DataContext;
+            string? queryType = sender?.Header as string;
+            await Task.Run(async () => await dataContext?.RunQueryAsync(queryType, userId));
+        }
+
+        private void CloseOpenDialog(string identifier)
+        {
+            var dialog = DialogHost.DialogHost.GetDialogSession(identifier);
+            if (DialogHost.DialogHost.IsDialogOpen(identifier)) dialog?.Close();
         }
     }
 }

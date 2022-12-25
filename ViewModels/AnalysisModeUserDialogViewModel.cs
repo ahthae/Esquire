@@ -5,13 +5,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.Data.Fusion;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.ViewModels;
 
-public class GetDatabaseUsersMessage { }
+public class AnalysisModeUserDialogCloseMessage : DialogCloseMessage {}
 public class ConfirmDatabaseUserMessage { }
 
 public partial class AnalysisModeUserDialogViewModel : ViewModelBase
@@ -23,13 +25,11 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
         public decimal? UserId { get; set; }
     }
     
-    private readonly IServiceProvider _serviceProvider;
-    [ObservableProperty] private ObservableCollection<UserDialogUser> _users;
+    [ObservableProperty] private ObservableCollection<UserDialogUser>? _users;
     [ObservableProperty] private UserDialogUser? _selectedUser;
 
-    public AnalysisModeUserDialogViewModel(IServiceProvider serviceProvider)
+    public AnalysisModeUserDialogViewModel() 
     {
-        _serviceProvider = serviceProvider;
 
         SelectedUser = new UserDialogUser()
         {
@@ -38,44 +38,41 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
             UserId = 0
         };
 
-        WeakReferenceMessenger.Default.Register<AnalysisModeUserDialogViewModel, GetDatabaseUsersMessage>(this, (r, m) =>
-        {
-            try
-            {
-                GetDatabaseUsersAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error querying database for users {ex.Message}"); //TODO
-            }
-        });
         PopulateUsers = PopulateUsersAsync;
     }
-
-    public void OnConfirmCommand() => WeakReferenceMessenger.Default.Send(new ConfirmDatabaseUserMessage());
+    
+    [RelayCommand]
+    public void OnConfirm() => WeakReferenceMessenger.Default.Send(new ConfirmDatabaseUserMessage());
+    [RelayCommand]
+    public void OnCancel() => WeakReferenceMessenger.Default.Send(new AnalysisModeUserDialogCloseMessage());
     public Func<string?,CancellationToken,Task<IEnumerable<object>>> PopulateUsers { get; }
 
     private async Task<IEnumerable<object>> PopulateUsersAsync(string? text, CancellationToken token)
     {
-        return from user in Users.Where(user => user.Username is not null ? user.Username.Contains(text ?? "", StringComparison.OrdinalIgnoreCase) : false )
+        return from user in Users.Where(user => user.Username?.Contains(text ?? "", StringComparison.OrdinalIgnoreCase) ?? false )
             select user;
     }
 
-    private async Task GetDatabaseUsersAsync()
+    public async Task UpdateDatabaseUsersAsync()
     {
-        await Task.Run(() =>
+        try
         {
-            FusionContext? db = _serviceProvider.GetService<FusionContext>();
-            Users = new ObservableCollection<UserDialogUser>(
-                from user in db!.PerUsers.Where(user => user.ActiveFlag == "Y")
-                                         .Select(u => new { u.Username, u.UserGuid, u.UserId})
-                select new UserDialogUser()
-                {
-                    Username = user.Username,
-                    UserGuid = user.UserGuid,
-                    UserId = user.UserId
-                });
+            Users = await QueryDatabaseUsersAsync();
             SelectedUser = null;
-        });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error querying database for users {ex.Message}\n{ex.StackTrace}"); //TODO show is UI
+        }
+    }
+
+    private static async Task<ObservableCollection<UserDialogUser>> QueryDatabaseUsersAsync()
+    {
+            FusionContext? db = App.Current!.Services.GetService<FusionContext>();
+            var users = db!.PerUsers
+                                       .Where(user => user.ActiveFlag == "Y")
+                                       .Select(u => new UserDialogUser{ Username = u.Username, UserGuid = u.UserGuid, UserId = u.UserId })
+                                       .ToListAsync();
+            return new ObservableCollection<UserDialogUser>(await users);
     }
 }

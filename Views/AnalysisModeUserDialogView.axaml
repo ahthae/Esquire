@@ -1,19 +1,18 @@
-<Window xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:esquire.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="esquire.Views.AnalysisModeUserDialogWindow"
-        Title="AnalysisModeUserDialog"
-        Opened="OnInitialized">
+        x:Class="esquire.Views.AnalysisModeUserDialogView"
+        AttachedToVisualTree="Visual_OnAttachedToVisualTree">
 	<Design.DataContext>
 		<viewModels:AnalysisModeUserDialogViewModel/>
 	</Design.DataContext>
 	
 	<StackPanel Margin="20">
 		<AutoCompleteBox Name="UserSelection"
-						 AsyncPopulator="{Binding PopulateUsersAsync}"
+						 AsyncPopulator="{Binding PopulateUsers}"
 						 Items="{Binding Users}"
 						 FilterMode="None"
 						 SelectedItem="{Binding SelectedUser}"
@@ -30,8 +29,8 @@
 		<TextBlock>Oracle Applications Cloud (Personnel) User ID</TextBlock>
 		<TextBox IsReadOnly="True" Text="{Binding SelectedUser.UserId}"/>
 		<Grid ColumnDefinitions="Auto,Auto">
-			<Button Grid.Column="0" Content="Confirm" IsEnabled="True" Command="{Binding OnConfirmCommand}"/>
-			<Button Grid.Column="1" Content="Cancel" Command="{Binding $parent[Window].Close}"/>
+			<Button Grid.Column="0" Content="Confirm" IsEnabled="True" Command="{Binding OnConfirm}"/>
+			<Button Grid.Column="1" Content="Cancel" Command="{Binding OnCancel}"/>
 		</Grid>
 	</StackPanel>
-</Window>
+</UserControl>

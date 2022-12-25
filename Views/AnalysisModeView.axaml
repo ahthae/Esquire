@@ -2,7 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dialogHost="clr-namespace:DialogHost;assembly=DialogHost.Avalonia"
              xmlns:viewModels="clr-namespace:esquire.ViewModels"
+             xmlns:views="clr-namespace:esquire.Views"
              mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="810"
              x:Class="esquire.Views.AnalysisModeView">
 	
@@ -13,7 +15,7 @@
 	<DockPanel>
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="_Edit">
-				<MenuItem Header="_Database" Command="{Binding ShowDatabaseDialog}"/>
+				<MenuItem Header="_Database" Command="{Binding ShowDatabaseSettingsDialog}"/>
 			</MenuItem>
 		</Menu>
 		
@@ -36,11 +38,22 @@
 							</TreeViewItem>
 						</TreeView>
 						<GridSplitter Grid.Column="1"/>
-						<Panel Grid.Column="2">
-							<DataGrid CanUserResizeColumns="True"
-									  AutoGenerateColumns="True" 
-									  Items="{Binding Data}"/>
-						</Panel>
+						<dialogHost:DialogHost Identifier="QueryDialog" Grid.Column="2">
+							<dialogHost:DialogHost.DialogContent>
+								<views:AnalysisModeUserDialogView/>
+							</dialogHost:DialogHost.DialogContent>
+							<DockPanel>
+								<Panel DockPanel.Dock="Top">
+									<Button HorizontalAlignment="Right" Content="Export" Command="{Binding ExportData}"/>
+								</Panel>
+								<Panel>
+									<DataGrid AutoGenerateColumns="True" 
+									          CanUserResizeColumns="True"
+											  Items="{Binding Data}"
+											  AlternatingRowBackground="LightGray"/>
+								</Panel>
+							</DockPanel>
+						</dialogHost:DialogHost>
 					</Grid>
 				</Panel>
 			</TabItem>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using esquire.Services;
 using esquire.Services.Settings;
 using Oracle.ManagedDataAccess.Client;
 
@@ -30,10 +31,10 @@ namespace esquire.Services
             return connection;
         }
 
-        private static DbConnection GetProvider(Options.DatabaseOptions.ProviderType settingsProviderType) =>
+        private static DbConnection GetProvider(Settings.Options.DatabaseOptions.ProviderType settingsProviderType) =>
             settingsProviderType switch
             {
-                Options.DatabaseOptions.ProviderType.Oracle => new OracleConnection()
+                Settings.Options.DatabaseOptions.ProviderType.Oracle => new OracleConnection()
             };
     }
 }
