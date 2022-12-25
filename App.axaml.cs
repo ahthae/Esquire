@@ -56,6 +56,7 @@ public partial class App : Application
             IDatabaseService? db = App.Current.Services.GetService<IDatabaseService>();
             DbConnection connection = db.GetConnection();
             Console.WriteLine(connection.ConnectionString);
+            options.UseModel(esquire.Models.Compiled.FusionContextModel.Instance);
             options.UseOracle(connection);
         });
 
