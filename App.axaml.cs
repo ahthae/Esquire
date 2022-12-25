@@ -33,7 +33,7 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
     
-    public static App? Current => (App?)Application.Current;
+    public static new App? Current => (App?)Application.Current;
     
     public IServiceProvider Services { get; private set; }
 
@@ -51,12 +51,13 @@ public partial class App : Application
         services.AddSingleton<CsvExportService>();
         
         services.AddScoped<IDatabaseService, DatabaseService>();
-        services.AddDbContext<FusionContext>((serviceProvider, options) => {
-            IDatabaseService db = serviceProvider.GetService<IDatabaseService>();
+        services.AddDbContextPool<FusionContext>(options =>
+        {
+            IDatabaseService? db = App.Current.Services.GetService<IDatabaseService>();
             DbConnection connection = db.GetConnection();
             Console.WriteLine(connection.ConnectionString);
             options.UseOracle(connection);
-        }, ServiceLifetime.Transient);
+        });
 
         Services = services.BuildServiceProvider();
     }
