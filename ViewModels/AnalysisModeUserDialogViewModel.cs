@@ -60,15 +60,15 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
     {
         try
         {
-            await Task.Run(() =>
+            Users = await Task.Run(() =>
             {
                 Console.WriteLine("Fetching");
                 FusionContext? db = App.Current!.Services.GetService<FusionContext>();
 
-                Users = new ObservableCollection<UserDialogUser>(
+                return new ObservableCollection<UserDialogUser>(
                     db!.PerUsers
                         .Where(user => user.ActiveFlag == "Y")
-                        .Select(u => new UserDialogUser{ Username = u.Username, UserGuid = u.UserGuid, UserId = u.UserId }));
+                        .Select(u => new UserDialogUser{ Username = u.Username, UserGuid = u.UserGuid, UserId = u.UserId }).ToList());
             });
             
             SelectedUser = null;
