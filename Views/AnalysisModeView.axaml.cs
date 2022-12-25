@@ -23,9 +23,7 @@ namespace esquire.Views
             SendDataQueryMessage(sender as TreeViewItem);
         }
         private async void NavigationTreeView_DoubleTapWithUser(object? sender, RoutedEventArgs e)
-        {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
-            
+        {   
             var dialogVm = (AnalysisModeUserDialogViewModel?)App.Current!.Services.GetService(typeof(AnalysisModeUserDialogViewModel));
             if (dialogVm is null) Console.WriteLine("Error retrieving data: unable to create dialog");
             {
