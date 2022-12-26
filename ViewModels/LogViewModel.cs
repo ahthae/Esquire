@@ -1,21 +1,13 @@
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 
 namespace esquire.ViewModels;
 
 public partial class LogViewModel : ViewModelBase
 {
-    [ObservableProperty] private List<string> _log = new();
+    private ILogger _logger;
     
-    public LogViewModel()
-    {
-        
-    }
-
-    [RelayCommand]
-    public void WriteLine(string value)
-    {
-        Log.Add(value);
-    }
+    
 }

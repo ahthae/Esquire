@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace esquire.Services.Settings;
 
-public class SettingsService : ObservableObject, ISettingsService
+public partial class SettingsService : ObservableObject, ISettingsService
 {
     private const string ConfigDirectory = "Config";
     private const string ConfigurationFile = "appsettings.json";
@@ -15,7 +15,7 @@ public class SettingsService : ObservableObject, ISettingsService
 
     public SettingsService()
     {
-        CheckAndCreateConfigPath();
+        CheckAndCreateConfigPath(GetConfigPath());
         IConfiguration config = new ConfigurationBuilder()
             .AddJsonFile(GetConfigPath(), false, true)
             .Build();
@@ -36,25 +36,13 @@ public class SettingsService : ObservableObject, ISettingsService
 
     public void Write()
     {
-        CheckAndCreateConfigPath();
+        CheckAndCreateConfigPath(GetConfigPath());
         WriteSettings();
     }
-
-    // Checks whether the config file path exists and creates it if it doesn't
-    private void CheckAndCreateConfigPath()
+    
+    public string GetConfigPath()
     {
-        string configPath = GetConfigPath();
-        if (!(new DirectoryInfo(ConfigDirectory).Exists))
-        {
-            Console.WriteLine($"Creating new Config directory at {Path.GetFullPath(configPath)}");
-            Directory.CreateDirectory(ConfigDirectory);
-        }
-        if (!(new FileInfo(configPath).Exists))
-        {
-            Console.WriteLine($"Creating new config file at {Path.GetFullPath(configPath)}");
-            WriteSettings();
-            WasInitialized = true;
-        }
+        return Path.Join(ConfigDirectory, ConfigurationFile);
     }
 
     private void WriteSettings()
@@ -62,8 +50,19 @@ public class SettingsService : ObservableObject, ISettingsService
         File.WriteAllText(GetConfigPath(), JsonSerializer.Serialize(Settings));
     }
     
-    private static string GetConfigPath()
+    // Checks whether the config file path exists and creates it if it doesn't
+    private void CheckAndCreateConfigPath(string path)
     {
-        return Path.Join(ConfigDirectory, ConfigurationFile);
+        if (!(new DirectoryInfo(ConfigDirectory).Exists))
+        {
+            Console.WriteLine($"Creating new Config directory at {Path.GetFullPath(path)}");
+            Directory.CreateDirectory(ConfigDirectory);
+        }
+        if (!(new FileInfo(path).Exists))
+        {
+            Console.WriteLine($"Creating new config file at {Path.GetFullPath(path)}");
+            WriteSettings();
+            WasInitialized = true;
+        }
     }
 }
