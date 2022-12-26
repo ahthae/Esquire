@@ -48,11 +48,20 @@
 
   <ItemGroup>
     <Folder Include="Models\Generated" />
+    <Folder Include="Views\DatabaseMode" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Views\DatabaseSettingsDialogView.axaml.cs">
       <DependentUpon>SignonWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\AnalysisMode\UserDialogView.axaml.cs">
+      <DependentUpon>AnalysisModeUserDialogView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\AnalysisMode\AnalysisModeView.axaml.cs">
+      <DependentUpon>AnalysisModeView.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

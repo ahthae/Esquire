@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using esquire.ViewModels;
+using esquire.ViewModels.AnalysisMode;
 
-namespace esquire.Views
+namespace esquire.Views.AnalysisMode
 {
     public partial class AnalysisModeView : UserControl
     {
@@ -23,7 +23,7 @@ namespace esquire.Views
         }
         private async void NavigationTreeView_DoubleTapWithUser(object? sender, RoutedEventArgs e)
         {   
-            var dialogVm = (AnalysisModeUserDialogViewModel?)App.Current!.Services.GetService(typeof(AnalysisModeUserDialogViewModel));
+            var dialogVm = (UserDialogViewModel?)App.Current!.Services.GetService(typeof(UserDialogViewModel));
             if (dialogVm is null) Console.WriteLine("Error retrieving data: unable to get dialog content");
             
             CloseOpenDialog(_dialogIdentifier);

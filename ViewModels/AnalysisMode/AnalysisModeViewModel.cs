@@ -10,7 +10,7 @@ using esquire.Services.Export;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace esquire.ViewModels;
+namespace esquire.ViewModels.AnalysisMode;
 
 public class DataQueryMessage : ValueChangedMessage<string>
 {

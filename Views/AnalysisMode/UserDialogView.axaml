@@ -2,12 +2,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:esquire.ViewModels"
+        xmlns:viewModels="clr-namespace:esquire.ViewModels.AnalysisMode"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="esquire.Views.AnalysisModeUserDialogView"
+        x:Class="esquire.Views.AnalysisMode.UserDialogView"
         AttachedToVisualTree="Visual_OnAttachedToVisualTree">
 	<Design.DataContext>
-		<viewModels:AnalysisModeUserDialogViewModel/>
+		<viewModels:UserDialogViewModel/>
 	</Design.DataContext>
 	
 	<StackPanel Margin="20">

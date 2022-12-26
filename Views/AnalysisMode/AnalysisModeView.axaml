@@ -3,10 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dialogHost="clr-namespace:DialogHost;assembly=DialogHost.Avalonia"
-             xmlns:viewModels="clr-namespace:esquire.ViewModels"
-             xmlns:views="clr-namespace:esquire.Views"
+             xmlns:viewModels="clr-namespace:esquire.ViewModels.AnalysisMode"
              mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="810"
-             x:Class="esquire.Views.AnalysisModeView">
+             x:Class="esquire.Views.AnalysisMode.AnalysisModeView">
 	
 	<Design.DataContext>
 		<viewModels:AnalysisModeViewModel/>
@@ -40,16 +39,17 @@
 						<GridSplitter Grid.Column="1"/>
 						<dialogHost:DialogHost Identifier="QueryDialog" Grid.Column="2">
 							<dialogHost:DialogHost.DialogContent>
-								<views:AnalysisModeUserDialogView/>
+								<viewModels:UserDialogViewModel/>
 							</dialogHost:DialogHost.DialogContent>
 							<DockPanel>
 								<Panel DockPanel.Dock="Top">
 									<Button HorizontalAlignment="Right" Content="Export" Command="{Binding ExportData}"/>
 								</Panel>
 								<Panel>
-									<DataGrid AutoGenerateColumns="True" 
+									<DataGrid Items="{Binding Data}"
+									          AutoGenerateColumns="True" 
+									          IsReadOnly="True"
 									          CanUserResizeColumns="True"
-											  Items="{Binding Data}"
 											  AlternatingRowBackground="LightGray"/>
 								</Panel>
 							</DockPanel>

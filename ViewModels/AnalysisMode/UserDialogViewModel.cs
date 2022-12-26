@@ -11,12 +11,12 @@ using esquire.Data.Fusion;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace esquire.ViewModels;
+namespace esquire.ViewModels.AnalysisMode;
 
-public class AnalysisModeUserDialogCloseMessage : DialogCloseMessage {}
+public class UserDialogCloseMessage : DialogCloseMessage {}
 public class ConfirmDatabaseUserMessage { }
 
-public partial class AnalysisModeUserDialogViewModel : ViewModelBase
+public partial class UserDialogViewModel : ViewModelBase
 {
     public class UserDialogUser
     {
@@ -28,7 +28,7 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
     [ObservableProperty] private ObservableCollection<UserDialogUser>? _users;
     [ObservableProperty] private UserDialogUser? _selectedUser;
 
-    public AnalysisModeUserDialogViewModel() 
+    public UserDialogViewModel() 
     {
 
         SelectedUser = new UserDialogUser()
@@ -44,12 +44,12 @@ public partial class AnalysisModeUserDialogViewModel : ViewModelBase
     [RelayCommand]
     public void OnConfirm() => WeakReferenceMessenger.Default.Send(new ConfirmDatabaseUserMessage());
     [RelayCommand]
-    public void OnCancel() => WeakReferenceMessenger.Default.Send(new AnalysisModeUserDialogCloseMessage());
+    public void OnCancel() => WeakReferenceMessenger.Default.Send(new UserDialogCloseMessage());
     public Func<string?,CancellationToken,Task<IEnumerable<object>>> PopulateUsers { get; }
 
     private async Task<IEnumerable<object>> PopulateUsersAsync(string? text, CancellationToken token)
     {
-        return from user in Users.Where(user => user.Username?.Contains(text ?? "", StringComparison.OrdinalIgnoreCase) ?? false )
+        return from user in Enumerable.Where<UserDialogUser>(Users, user => user.Username?.Contains(text ?? "", StringComparison.OrdinalIgnoreCase) ?? false )
             select user;
     }
 

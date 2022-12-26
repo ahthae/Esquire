@@ -8,6 +8,7 @@ using esquire.Services;
 using esquire.Services.Export;
 using esquire.Services.Settings;
 using esquire.ViewModels;
+using esquire.ViewModels.AnalysisMode;
 using esquire.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,7 +46,7 @@ public partial class App : Application
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<DatabaseModeViewModel>();
         services.AddTransient<AnalysisModeViewModel>();
-        services.AddTransient<AnalysisModeUserDialogViewModel>();
+        services.AddTransient<UserDialogViewModel>();
 
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<CsvExportService>();

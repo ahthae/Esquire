@@ -13,7 +13,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        Page = new AnalysisModeViewModel();
+        Page = new AnalysisMode.AnalysisModeViewModel();
         if (App.Current!.Services.GetService<ISettingsService>().WasInitialized)
             WeakReferenceMessenger.Default.Send<ShowDatabaseSettingsDialogMessage>();
     }
