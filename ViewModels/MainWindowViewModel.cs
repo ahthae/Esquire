@@ -1,21 +1,29 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Input;
 using esquire.Services.Settings;
-using Microsoft.Extensions.DependencyInjection;
+using esquire.ViewModels.AnalysisMode;
+using esquire.ViewModels.DatabaseMode;
 
 namespace esquire.ViewModels;
 
-public class ShowDatabaseSettingsDialogMessage{}
-
 public partial class MainWindowViewModel : ViewModelBase
 {
+    private readonly AnalysisModeViewModel _analysisMode;
+    private readonly DatabaseModeViewModel _databaseMode;
     [ObservableProperty] private ViewModelBase _page;
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(ISettingsService settings,
+        AnalysisModeViewModel analysisModeViewModel,
+        DatabaseModeViewModel databaseModeViewModel)
     {
-        Page = new AnalysisMode.AnalysisModeViewModel();
-        if (App.Current!.Services.GetService<ISettingsService>().WasInitialized)
-            WeakReferenceMessenger.Default.Send<ShowDatabaseSettingsDialogMessage>();
+        _analysisMode = analysisModeViewModel;
+        _databaseMode = databaseModeViewModel;
+        Page = _analysisMode;
+
+        if (settings.WasInitialized)
+            ShowDatabaseSettingsDialog();
     }
     
+    [RelayCommand]
+    public void ShowDatabaseSettingsDialog() => OpenDialog<DatabaseSettingsDialogViewModel>();
 }

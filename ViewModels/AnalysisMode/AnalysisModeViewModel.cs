@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using DocumentFormat.OpenXml.Spreadsheet;
 using esquire.Data.Fusion;
 using esquire.Services.Export;
+using esquire.Views;
+using esquire.Views.AnalysisMode;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,12 +24,9 @@ public class DataQueryMessage : ValueChangedMessage<string>
 public partial class AnalysisModeViewModel : ViewModelBase
 {
     [ObservableProperty] private IEnumerable? _data;
-    [ObservableProperty] private string? _infoText;
-
+    
     [RelayCommand]
     public async Task ExportData() => await ExportAsync(Data);
-    [RelayCommand]
-    public void ShowDatabaseSettingsDialog() => OpenDialog<DatabaseSettingsDialogViewModel>();
 
     public async Task RunQueryAsync(string? query, decimal? userId = null)
     {
@@ -36,8 +36,8 @@ public partial class AnalysisModeViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            InfoText = $"Failed to query database: {ex.Message}";
-            Console.WriteLine(InfoText);
+            string error = $"Failed to query database: {ex.Message}";
+            Console.WriteLine(error);
         }
     }
 

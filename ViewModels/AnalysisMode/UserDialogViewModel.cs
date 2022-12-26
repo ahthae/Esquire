@@ -28,9 +28,8 @@ public partial class UserDialogViewModel : ViewModelBase
     [ObservableProperty] private ObservableCollection<UserDialogUser>? _users;
     [ObservableProperty] private UserDialogUser? _selectedUser;
 
-    public UserDialogViewModel() 
+    public UserDialogViewModel()
     {
-
         SelectedUser = new UserDialogUser()
         {
             Username = "",
@@ -49,7 +48,7 @@ public partial class UserDialogViewModel : ViewModelBase
 
     private async Task<IEnumerable<object>> PopulateUsersAsync(string? text, CancellationToken token)
     {
-        return from user in Enumerable.Where<UserDialogUser>(Users, user => user.Username?.Contains(text ?? "", StringComparison.OrdinalIgnoreCase) ?? false )
+        return from user in Users?.Where(user => user.Username?.Contains(text ?? "", StringComparison.OrdinalIgnoreCase) ?? false )
             select user;
     }
 
@@ -62,7 +61,8 @@ public partial class UserDialogViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error querying database for users {ex.Message}\n{ex.StackTrace}"); //TODO show is UI
+            string error = $"Error querying database for users {ex.Message}\n{ex.StackTrace}";
+            Console.WriteLine(error);
         }
     }
 

@@ -17,7 +17,7 @@ public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
     private readonly ISettingsService _settingsService;
     private readonly IDatabaseService _databaseService;
     [ObservableProperty] private Options _settings;
-    [ObservableProperty] private string _connectionTestResult;
+    [ObservableProperty] private string _connectionTestResult = "";
 
     public DatabaseSettingsDialogViewModel(ISettingsService settingsService, IDatabaseService databaseService) 
     {

@@ -9,6 +9,7 @@ using esquire.Services.Export;
 using esquire.Services.Settings;
 using esquire.ViewModels;
 using esquire.ViewModels.AnalysisMode;
+using esquire.ViewModels.DatabaseMode;
 using esquire.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,8 +43,9 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
-        services.AddTransient<DatabaseSettingsDialogViewModel>();
         services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<LogViewModel>();
+        services.AddTransient<DatabaseSettingsDialogViewModel>();
         services.AddTransient<DatabaseModeViewModel>();
         services.AddTransient<AnalysisModeViewModel>();
         services.AddTransient<UserDialogViewModel>();
