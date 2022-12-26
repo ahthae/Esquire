@@ -59,11 +59,8 @@ public partial class App : Application
         services.AddSingleton<ILoggerFactory>(provider =>
         {
             ISettingsService settings = provider.GetService<ISettingsService>();
-            IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile(settings.GetConfigPath())
-                .Build();
             Logger logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(config)
+                .ReadFrom.Configuration(settings.Config)
                 .CreateLogger();
             return new LoggerFactory().AddSerilog(logger);
         });
@@ -74,7 +71,6 @@ public partial class App : Application
         {
             IDatabaseService? db = Current.Services.GetService<IDatabaseService>();
             DbConnection connection = db.GetConnection();
-            Console.WriteLine(connection.ConnectionString);
             options.UseModel(Models.Compiled.FusionContextModel.Instance);
             options.UseOracle(connection);
         });

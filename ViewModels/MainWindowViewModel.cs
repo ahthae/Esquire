@@ -13,14 +13,18 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly AnalysisModeViewModel _analysisMode;
     private readonly DatabaseModeViewModel _databaseMode;
     [ObservableProperty] private ViewModelBase _page;
+    [ObservableProperty] private ViewModelBase _log;
 
     public MainWindowViewModel(ILogger<MainWindowViewModel> logger,
         ISettingsService settings,
+        LogViewModel logViewModel,
         AnalysisModeViewModel analysisModeViewModel,
         DatabaseModeViewModel databaseModeViewModel)
     {
         _logger = logger;
-        _logger.LogCritical("Testing logger from MainWindowViewModel");
+        logger.LogCritical("MainWindow test log");
+
+        _log = logViewModel;
         _analysisMode = analysisModeViewModel;
         _databaseMode = databaseModeViewModel;
         Page = _analysisMode;

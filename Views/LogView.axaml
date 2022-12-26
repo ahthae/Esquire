@@ -10,5 +10,5 @@
 		<vm:LogViewModel/>
 	</Design.DataContext>
 	
-	<TextBlock Text="{Binding Info.FirstOrDefault}"/>
+	<TextBlock Text="{Binding Log^}"/>
 </UserControl>
