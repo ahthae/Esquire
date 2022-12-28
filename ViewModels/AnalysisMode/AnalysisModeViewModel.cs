@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using esquire.Data.Fusion;
 using esquire.Services.Export;
+using esquire.Services.Settings;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace esquire.ViewModels.AnalysisMode;
@@ -21,14 +23,26 @@ public class DataQueryMessage : ValueChangedMessage<string>
 
 public partial class AnalysisModeViewModel : ViewModelBase
 {
+    private FusionContext _db;
+    private readonly CsvExportService _csvExportService;
     private readonly ILogger<AnalysisModeViewModel> _logger;
     [ObservableProperty] private IEnumerable? _data;
 
-    public AnalysisModeViewModel(ILogger<AnalysisModeViewModel> logger)
+    public AnalysisModeViewModel(ILogger<AnalysisModeViewModel> logger,
+        ISettingsService settingsService,
+        CsvExportService csvExportService,
+        FusionContext db)
     {
         _logger = logger;
+        _csvExportService = csvExportService;
+        _db = db;
+        
+        settingsService.Settings.PropertyChanged += (object? sender, PropertyChangedEventArgs args) =>
+        {
+            _db = Ioc.Default.GetService<FusionContext>();
+        };
     }
-    
+
     [RelayCommand]
     public async Task ExportData() => await ExportAsync(Data);
 
@@ -47,18 +61,17 @@ public partial class AnalysisModeViewModel : ViewModelBase
 
     private async Task QueryAsync(string? query, decimal? userId = null)
     {
-            FusionContext db = App.Current!.Services.GetService<FusionContext>()!;
             switch (query)
             {
                 case "Business Units":
-                Data = await db.FunAllBusinessUnitsVs.ToListAsync(); //TODO select
+                Data = await _db.FunAllBusinessUnitsVs.ToListAsync(); //TODO select
                     break;
 
             case "Business Unit Organizations":
-                Data = await (from hou in db.HrOrganizationUnits
-                              join haouf in db.HrAllOrganizationUnitsFs
+                Data = await (from hou in _db.HrOrganizationUnits
+                              join haouf in _db.HrAllOrganizationUnitsFs
                               on hou.OrganizationId equals haouf.OrganizationId
-                              join houcf in db.HrOrgUnitClassificationsFs
+                              join houcf in _db.HrOrgUnitClassificationsFs
                               .Where(i => i.ClassificationCode == "FUN_BUSINESS_UNIT")
                               on haouf.OrganizationId equals houcf.OrganizationId
                               select new
@@ -71,12 +84,12 @@ public partial class AnalysisModeViewModel : ViewModelBase
                 break;
 
             case "All Business Units for This User":
-                Data = await (from fabu in db.FunAllBusinessUnitsVs
-                              join furda in db.FunUserRoleDataAsgnmnts.Where(furda => furda.ActiveFlag == "Y")
+                Data = await (from fabu in _db.FunAllBusinessUnitsVs
+                              join furda in _db.FunUserRoleDataAsgnmnts.Where(furda => furda.ActiveFlag == "Y")
                               on fabu.BuId equals furda.OrgId
-                              join pu in db.PerUsers.Where(pu => pu.ActiveFlag == "Y" && pu.UserId == userId)
+                              join pu in _db.PerUsers.Where(pu => pu.ActiveFlag == "Y" && pu.UserId == userId)
                               on furda.UserGuid equals pu.UserGuid
-                              join arv in db.AseRoleVls on furda.RoleName equals arv.Code //TODO arv.Language = userenv('LANG')
+                              join arv in _db.AseRoleVls on furda.RoleName equals arv.Code //TODO arv.Language = userenv('LANG')
                               select new
                               {
                                   PERUserName = pu.Username,
@@ -90,24 +103,17 @@ public partial class AnalysisModeViewModel : ViewModelBase
         }
     }
     
-    private async Task ExportAsync(IEnumerable? data)
+    private async Task ExportAsync(IEnumerable? data) //TODO decouple from export implementation
     {
         if (data is null)
         {
-            Console.WriteLine("Export error: no data to export");
-            return;
-        }
-
-        CsvExportService? exportService = App.Current!.Services.GetService<CsvExportService>();
-        if (exportService is null)
-        {
-            Console.WriteLine("Export error: could not find export service");
+            _logger.LogError("CSV export error: no data to export");
             return;
         }
         
         try
         {
-            await exportService.ExportAsync(data, "Export/data.csv");
+            await _csvExportService.ExportAsync(data, "Export/data.csv");
         }
         catch (Exception ex)
         {

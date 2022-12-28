@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.ViewModels.AnalysisMode;
 
@@ -13,8 +14,8 @@ public partial class UserDialogView : UserControl
     
     public UserDialogView()
     {
-        // DialogHost.Avalonia discards viewmodels
-        DataContext = App.Current.Services.GetService(typeof(UserDialogViewModel));
+        // Get datacontext because DialogHost.Avalonia discards the viewmodel
+        DataContext = Ioc.Default.GetService<UserDialogViewModel>();
         
         WeakReferenceMessenger.Default.Register<ConfirmDatabaseUserMessage>(this, ConfirmDatabaseUserHandler);
         WeakReferenceMessenger.Default.Register<UserDialogCloseMessage>(this, OnClose);

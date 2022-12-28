@@ -3,16 +3,21 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using esquire.ViewModels.AnalysisMode;
+using Microsoft.Extensions.Logging;
 
 namespace esquire.Views.AnalysisMode
 {
     public partial class AnalysisModeView : UserControl
     {
+        private ILogger<AnalysisModeView> _logger;
         private readonly string _dialogIdentifier = "QueryDialog";
         
         public AnalysisModeView()
         {
+            _logger = Ioc.Default.GetService<ILogger<AnalysisModeView>>();
+            
             InitializeComponent();
         }
 
@@ -23,8 +28,12 @@ namespace esquire.Views.AnalysisMode
         }
         private async void NavigationTreeView_DoubleTapWithUser(object? sender, RoutedEventArgs e)
         {   
-            var dialogVm = (UserDialogViewModel?)App.Current!.Services.GetService(typeof(UserDialogViewModel));
-            if (dialogVm is null) Console.WriteLine("Error retrieving data: unable to get dialog content");
+            var dialogVm = Ioc.Default.GetService<UserDialogViewModel>();
+            if (dialogVm is null)
+            {
+                _logger.LogError("Error retrieving data: unable to get dialog content");
+                return;
+            }
             
             CloseOpenDialog(_dialogIdentifier);
             decimal? userId = (decimal?)await DialogHost.DialogHost.Show(dialogVm!, _dialogIdentifier);

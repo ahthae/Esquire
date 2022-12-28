@@ -3,6 +3,7 @@ using System.Data.Common;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using esquire.Data.Fusion;
 using esquire.Services;
 using esquire.Services.Export;
@@ -12,7 +13,6 @@ using esquire.ViewModels.AnalysisMode;
 using esquire.ViewModels.DatabaseMode;
 using esquire.Views;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -41,8 +41,6 @@ public partial class App : Application
     
     public new static App? Current => (App?)Application.Current;
 
-    public IServiceProvider Services { get; private set; }
-
     private void ConfigureServices()
     {
         var services = new ServiceCollection();
@@ -67,14 +65,14 @@ public partial class App : Application
         services.AddLogging();
         
         services.AddScoped<IDatabaseService, DatabaseService>();
-        services.AddDbContextPool<FusionContext>(options =>
+        services.AddDbContext<FusionContext>(options =>
         {
-            IDatabaseService? db = Current.Services.GetService<IDatabaseService>();
+            IDatabaseService? db = Ioc.Default.GetService<IDatabaseService>();
             DbConnection connection = db.GetConnection();
             options.UseModel(Models.Compiled.FusionContextModel.Instance);
             options.UseOracle(connection);
-        });
+        }, ServiceLifetime.Transient);
 
-        Services = services.BuildServiceProvider();
+        Ioc.Default.ConfigureServices(services.BuildServiceProvider());
     }
 }

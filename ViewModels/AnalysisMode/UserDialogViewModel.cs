@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using esquire.Data.Fusion;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace esquire.ViewModels.AnalysisMode;
 
@@ -24,12 +23,15 @@ public partial class UserDialogViewModel : ViewModelBase
         public string? UserGuid { get; set; }
         public decimal? UserId { get; set; }
     }
-    
+
+    private readonly FusionContext _db;
     [ObservableProperty] private ObservableCollection<UserDialogUser>? _users;
     [ObservableProperty] private UserDialogUser? _selectedUser;
 
-    public UserDialogViewModel()
+    public UserDialogViewModel(FusionContext db)
     {
+        _db = db;
+        
         SelectedUser = new UserDialogUser()
         {
             Username = "",
@@ -66,10 +68,9 @@ public partial class UserDialogViewModel : ViewModelBase
         }
     }
 
-    private static async Task<ObservableCollection<UserDialogUser>> QueryDatabaseUsersAsync()
+    private async Task<ObservableCollection<UserDialogUser>> QueryDatabaseUsersAsync()
     {
-            FusionContext? db = App.Current!.Services.GetService<FusionContext>();
-            var users = db!.PerUsers
+            var users = _db!.PerUsers
                                        .Where(user => user.ActiveFlag == "Y")
                                        .Select(u => new UserDialogUser{ Username = u.Username, UserGuid = u.UserGuid, UserId = u.UserId })
                                        .ToListAsync();
