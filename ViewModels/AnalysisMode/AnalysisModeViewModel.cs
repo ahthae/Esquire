@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using DocumentFormat.OpenXml.Spreadsheet;
 using esquire.Data.Fusion;
 using esquire.Services.Export;
-using esquire.Views;
-using esquire.Views.AnalysisMode;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace esquire.ViewModels.AnalysisMode;
 
@@ -23,7 +21,13 @@ public class DataQueryMessage : ValueChangedMessage<string>
 
 public partial class AnalysisModeViewModel : ViewModelBase
 {
+    private readonly ILogger<AnalysisModeViewModel> _logger;
     [ObservableProperty] private IEnumerable? _data;
+
+    public AnalysisModeViewModel(ILogger<AnalysisModeViewModel> logger)
+    {
+        _logger = logger;
+    }
     
     [RelayCommand]
     public async Task ExportData() => await ExportAsync(Data);
@@ -36,8 +40,8 @@ public partial class AnalysisModeViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            string error = $"Failed to query database: {ex.Message}";
-            Console.WriteLine(error);
+            _logger.LogError("Failed to query database: {Message}", ex.Message);
+            Log($"Failed to query database: {ex.Message}");
         }
     }
 
@@ -86,7 +90,7 @@ public partial class AnalysisModeViewModel : ViewModelBase
         }
     }
     
-    private static async Task ExportAsync(IEnumerable? data)
+    private async Task ExportAsync(IEnumerable? data)
     {
         if (data is null)
         {
@@ -107,7 +111,8 @@ public partial class AnalysisModeViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Export error: {ex.GetType()}: {ex.Message}");
+            _logger.LogError("Export error: {Exception}: {Message}", ex.GetType(), ex.Message);
+            Log($"Export error: {ex.GetType()}: {ex.Message}");
         }
     }
 }

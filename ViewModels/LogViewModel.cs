@@ -1,59 +1,41 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using esquire.Services.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace esquire.ViewModels;
 
+public class LogMessage
+{
+    public string Message { get; }
+    public LogMessage(string message) => Message = message;
+}
+
 public partial class LogViewModel : ViewModelBase
 {
-    private ILogger<LogViewModel> _logger;
-    private string? _logFilePath;
-    [ObservableProperty] private Task<string?> _log;
+    private string _logLine = "";
+    [ObservableProperty] private Stack<string> _log = new();
 
-    public LogViewModel(ILogger<LogViewModel> logger, ISettingsService settings)
+    public LogViewModel()
     {
-        _logger = logger;
-        
-        _logFilePath = Path.GetFullPath(settings.Config.GetValue<string>("Serilog:WriteTo:Async:Args:configure:0:Args:path"));
-        string? directory = Path.GetDirectoryName(_logFilePath);
-        
-        if (directory is not null && !Directory.Exists(_logFilePath))
+        WeakReferenceMessenger.Default.Register<LogMessage>(this, (sender, message) =>
         {
-            Directory.CreateDirectory(directory);
-        }
-        if (_logFilePath is null && !File.Exists(_logFilePath))
-        {
-            _logger.LogError("Could not retrieve log file");
-            return;
-        }
-
-        _log = ReadFileAsync(_logFilePath);
-
-        using var watcher = new FileSystemWatcher(directory!);
-//        watcher.NotifyFilter = NotifyFilters.LastWrite;
-        watcher.EnableRaisingEvents = true;
-        watcher.Changed += ReadLogFile;
-//        watcher.Filter = Path.GetFileName(_logFilePath);
+            Log.Push(message.Message);
+            LogLine = Log.Peek();
+        });
     }
 
-    private void ReadLogFile(object sender, FileSystemEventArgs e) //TODO
+    public string LogLine
     {
-        _logger.LogInformation("Reading from log file");
-        _log = ReadFileAsync(e.FullPath);
-    }
-
-    private static async Task<string?> ReadFileAsync(string path)
-    {
-        
-        await using FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        using StreamReader reader = new StreamReader(stream);
-
-        return await reader.ReadLineAsync();
+        get => _logLine;
+        private set => SetProperty(ref _logLine, value);
     }
 }

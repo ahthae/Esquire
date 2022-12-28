@@ -22,7 +22,6 @@ public partial class MainWindowViewModel : ViewModelBase
         DatabaseModeViewModel databaseModeViewModel)
     {
         _logger = logger;
-        logger.LogCritical("MainWindow test log");
 
         _log = logViewModel;
         _analysisMode = analysisModeViewModel;
