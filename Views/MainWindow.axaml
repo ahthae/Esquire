@@ -23,9 +23,7 @@
 		</Menu>
 		
 		<Panel DockPanel.Dock="Bottom">
-			<ContentControl>
-				<vm:LogViewModel/>
-			</ContentControl>
+			<ContentControl Content="{Binding Log}"/>
 		</Panel>
 		
 		<ContentControl Content="{Binding Page}"/>

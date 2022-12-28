@@ -12,7 +12,11 @@ using esquire.ViewModels.AnalysisMode;
 using esquire.ViewModels.DatabaseMode;
 using esquire.Views;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Core;
 
 namespace esquire;
 
@@ -52,13 +56,21 @@ public partial class App : Application
 
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<CsvExportService>();
+        services.AddSingleton<ILoggerFactory>(provider =>
+        {
+            ISettingsService settings = provider.GetService<ISettingsService>();
+            Logger logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(settings.Config)
+                .CreateLogger();
+            return new LoggerFactory().AddSerilog(logger);
+        });
+        services.AddLogging();
         
         services.AddScoped<IDatabaseService, DatabaseService>();
         services.AddDbContextPool<FusionContext>(options =>
         {
-            IDatabaseService? db = App.Current.Services.GetService<IDatabaseService>();
+            IDatabaseService? db = Current.Services.GetService<IDatabaseService>();
             DbConnection connection = db.GetConnection();
-            Console.WriteLine(connection.ConnectionString);
             options.UseModel(Models.Compiled.FusionContextModel.Instance);
             options.UseOracle(connection);
         });

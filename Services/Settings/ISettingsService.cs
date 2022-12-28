@@ -1,11 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Configuration;
 
 namespace esquire.Services.Settings;
 
 public interface ISettingsService
 {
     public Options Settings { get; set; }
+    public IConfiguration Config { get; set; }
     public bool WasInitialized { get; set; }
+    public string GetConfigPath();
+    public string GetLogConfigPath();
     public void Write();
 }
 
