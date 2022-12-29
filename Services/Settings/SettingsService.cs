@@ -12,9 +12,30 @@ public partial class SettingsService : ObservableObject, ISettingsService
     private const string ConfigurationFile = "appsettings.json";
     private const string LogConfigurationFile = "logsettings.json";
     
-    [ObservableProperty] private Options _settings = new();
     [ObservableProperty] private IConfiguration _config;
     [ObservableProperty] private bool _wasInitialized = false;
+
+    [ObservableProperty] private Options _settings = new() 
+    {
+            Database = new DatabaseOptions()
+            {
+                Provider = DatabaseOptions.ProviderType.Oracle,
+                UserId = "SYSETM",
+                Password = "",
+                DataSource = "XEPDB1"
+            },
+            Logging = new LoggingOptions() 
+            { 
+                LogLevel = 
+                new LoggingOptions.LogLevelOptions()
+                {
+                    Default = "Debug", 
+                    Microsoft = "Information", 
+                    System = "Information"
+                }
+                
+            }
+    };
 
     public SettingsService()
     {

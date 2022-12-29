@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace esquire.Models
 {
-    public class ModelBase
+    public abstract class ModelBase
     {
+        public abstract IOrderedQueryable QueryAsync();
     }
 }

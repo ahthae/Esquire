@@ -52,6 +52,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\Fusion\Generated" />
+    <Folder Include="Models\Compiled\BusinessUnits" />
     <Folder Include="Models\Generated" />
     <Folder Include="Views\DatabaseMode" />
   </ItemGroup>

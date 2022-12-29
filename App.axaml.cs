@@ -1,4 +1,3 @@
-using System;
 using System.Data.Common;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -17,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
+using Serilog.Events;
 
 namespace esquire;
 
@@ -56,7 +56,7 @@ public partial class App : Application
         services.AddSingleton<CsvExportService>();
         services.AddSingleton<ILoggerFactory>(provider =>
         {
-            ISettingsService settings = provider.GetService<ISettingsService>();
+            ISettingsService settings = provider.GetRequiredService<ISettingsService>();
             Logger logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(settings.Config)
                 .CreateLogger();
@@ -65,13 +65,7 @@ public partial class App : Application
         services.AddLogging();
         
         services.AddScoped<IDatabaseService, DatabaseService>();
-        services.AddDbContext<FusionContext>(options =>
-        {
-            IDatabaseService? db = Ioc.Default.GetService<IDatabaseService>();
-            DbConnection connection = db.GetConnection();
-            options.UseModel(Models.Compiled.FusionContextModel.Instance);
-            options.UseOracle(connection);
-        }, ServiceLifetime.Transient);
+        services.AddDbContextFactory<BusinessUnitsContext>(options => {});
 
         Ioc.Default.ConfigureServices(services.BuildServiceProvider());
     }

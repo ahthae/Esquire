@@ -24,13 +24,13 @@ public partial class UserDialogViewModel : ViewModelBase
         public decimal? UserId { get; set; }
     }
 
-    private readonly FusionContext _db;
+    private readonly IDbContextFactory<BusinessUnitsContext> _dbFactory;
     [ObservableProperty] private ObservableCollection<UserDialogUser>? _users;
     [ObservableProperty] private UserDialogUser? _selectedUser;
 
-    public UserDialogViewModel(FusionContext db)
+    public UserDialogViewModel(IDbContextFactory<BusinessUnitsContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
         
         SelectedUser = new UserDialogUser()
         {
@@ -70,10 +70,11 @@ public partial class UserDialogViewModel : ViewModelBase
 
     private async Task<ObservableCollection<UserDialogUser>> QueryDatabaseUsersAsync()
     {
-            var users = _db!.PerUsers
-                                       .Where(user => user.ActiveFlag == "Y")
-                                       .Select(u => new UserDialogUser{ Username = u.Username, UserGuid = u.UserGuid, UserId = u.UserId })
-                                       .ToListAsync();
-            return new ObservableCollection<UserDialogUser>(await users);
+        await using BusinessUnitsContext db = _dbFactory.CreateDbContext();
+        var users = db!.PerUsers
+                                   .Where(user => user.ActiveFlag == "Y")
+                                   .Select(u => new UserDialogUser{ Username = u.Username, UserGuid = u.UserGuid, UserId = u.UserId })
+                                   .ToListAsync();
+        return new ObservableCollection<UserDialogUser>(await users);
     }
 }

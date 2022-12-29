@@ -1,9 +1,11 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 
 namespace esquire.Services.Settings;
 
-public interface ISettingsService
+public interface ISettingsService : INotifyPropertyChanged, INotifyPropertyChanging
 {
     public Options Settings { get; set; }
     public IConfiguration Config { get; set; }
@@ -13,33 +15,36 @@ public interface ISettingsService
     public void Write();
 }
 
-public partial class Options : ObservableObject
+public record Options
 {
-    [ObservableProperty] private DatabaseOptions _database = new();
-    [ObservableProperty] private LoggingOptions _logging = new();
+    public DatabaseOptions Database { get; set; }
+    public LoggingOptions Logging { get; set; }
+}
+
+public record DatabaseOptions
+{
     
-    public partial class DatabaseOptions : ObservableObject
+    [JsonConverter(typeof(JsonStringEnumConverter))] 
+    public ProviderType Provider { get; set; }
+    public string UserId { get; set; }
+    public string Password { get; set; }
+    public string DataSource { get; set; }
+    
+    public enum ProviderType
     {
-        [ObservableProperty] private ProviderType _provider = ProviderType.Oracle;
-        [ObservableProperty] private string _userId = "SYSTEM";
-        [ObservableProperty] private string _password = "";
-        [ObservableProperty] private string _dataSource  = "XEPDB1";
-        
-        public enum ProviderType
-        {
-            Oracle
-        }
+        [EnumMember(Value="Oracle")]
+        Oracle
     }
+}
 
-    public partial class LoggingOptions : ObservableObject
+public record LoggingOptions()
+{
+    public LogLevelOptions LogLevel { get; set; }
+    
+    public record LogLevelOptions
     {
-        [ObservableProperty] private LogLevelOptions _logLevel = new();
-
-        public partial class LogLevelOptions : ObservableObject
-        {
-            [ObservableProperty] private string _default = "Debug";
-            [ObservableProperty] private string _system = "Information";
-            [ObservableProperty] private string _microsoft = "Information";
-        }
+        public string Default { get; set; }
+        public string System { get; set; }
+        public string Microsoft { get; set; }
     }
 }

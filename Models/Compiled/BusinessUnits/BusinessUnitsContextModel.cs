@@ -8,18 +8,18 @@ using esquire.Data.Fusion;
 
 namespace esquire.Models.Compiled
 {
-    [DbContext(typeof(FusionContext))]
-    public partial class FusionContextModel : RuntimeModel
+    [DbContext(typeof(BusinessUnitsContext))]
+    public partial class BusinessUnitsContextModel : RuntimeModel
     {
-        static FusionContextModel()
+        static BusinessUnitsContextModel()
         {
-            var model = new FusionContextModel();
+            var model = new BusinessUnitsContextModel();
             model.Initialize();
             model.Customize();
             _instance = model;
         }
 
-        private static FusionContextModel _instance;
+        private static BusinessUnitsContextModel _instance;
         public static IModel Instance => _instance;
 
         partial void Initialize();

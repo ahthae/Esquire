@@ -38,7 +38,8 @@
 										  AutoGenerateColumns="True" 
 										  IsReadOnly="True"
 										  CanUserResizeColumns="True"
-										  AlternatingRowBackground="LightGray"/>
+										  AlternatingRowBackground="LightGray">
+								</DataGrid>
 							</Panel>
 						</DockPanel>
 					</dialogHost:DialogHost>
