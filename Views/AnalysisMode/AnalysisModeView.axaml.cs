@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
@@ -46,7 +44,7 @@ namespace esquire.Views.AnalysisMode
         {
             AnalysisModeViewModel? dataContext = (AnalysisModeViewModel?)DataContext;
             string? queryType = sender?.Header as string;
-            await Task.Run(async () => await dataContext?.RunQueryAsync(queryType, user));
+            await dataContext?.RunQueryAsync(queryType, user);
         }
 
         private void CloseOpenDialog(string identifier)
