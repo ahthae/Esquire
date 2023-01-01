@@ -26,9 +26,10 @@ public record DatabaseOptions
     
     [JsonConverter(typeof(JsonStringEnumConverter))] 
     public ProviderType Provider { get; set; }
-    public string UserId { get; set; }
-    public string Password { get; set; }
-    public string DataSource { get; set; }
+
+    public string UserId { get; set; } = "";
+    public string Password { get; set; } = "";
+    public string DataSource { get; set; } = "";
     
     public enum ProviderType
     {
@@ -43,8 +44,8 @@ public record LoggingOptions()
     
     public record LogLevelOptions
     {
-        public string Default { get; set; }
-        public string System { get; set; }
-        public string Microsoft { get; set; }
+        public string Default { get; set; } = "";
+        public string System { get; set; } = "";
+        public string Microsoft { get; set; } = "";
     }
 }
