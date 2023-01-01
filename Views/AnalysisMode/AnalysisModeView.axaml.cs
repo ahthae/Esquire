@@ -27,7 +27,7 @@ namespace esquire.Views.AnalysisMode
             SendDataQueryMessage(sender as TreeViewItem);
         }
         private async void NavigationTreeView_DoubleTapWithUser(object? sender, RoutedEventArgs e)
-        {   
+        {
             var dialogVm = Ioc.Default.GetService<UserDialogViewModel>();
             if (dialogVm is null)
             {

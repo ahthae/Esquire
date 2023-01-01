@@ -1,58 +1,55 @@
 ﻿using System;
 using System.Collections;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using esquire.Data.Fusion;
 using esquire.Services.Export;
+using esquire.Services.Repositories;
 using esquire.Services.Settings;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace esquire.ViewModels.AnalysisMode;
 
-public class DataQueryMessage : ValueChangedMessage<string>
-{
-    public decimal? UserId { get; }
-    public DataQueryMessage(string query, decimal? userId = null) : base(query) => UserId = userId;
-}
-
 public partial class AnalysisModeViewModel : ViewModelBase
 {
-    private CancellationTokenSource _cts = new();
+    private readonly ILogger<AnalysisModeViewModel> _logger;
+    private readonly ISettingsService _settingsService;
+    private readonly CsvExportService _csvExportService;
+    
     private bool _querying;
+    private CancellationTokenSource _cts = new();
     private BusinessUnitsContext _db;
     private IDbContextFactory<BusinessUnitsContext> _dbFactory;
-    private ISettingsService _settingsService;
-    private readonly CsvExportService _csvExportService;
-    private readonly ILogger<AnalysisModeViewModel> _logger;
+
+    private readonly IBusinessUnitsRepository _businessUnitsRepository;
+    
     [ObservableProperty] private IEnumerable? _data;
 
     public AnalysisModeViewModel(ILogger<AnalysisModeViewModel> logger,
         ISettingsService settingsService,
         CsvExportService csvExportService,
-        IDbContextFactory<BusinessUnitsContext> dbFactory)
+        IDbContextFactory<BusinessUnitsContext> dbFactory,
+        
+        IBusinessUnitsRepository businessUnitsRepository)
     {
         _logger = logger;
         _settingsService = settingsService;
         _csvExportService = csvExportService;
         _dbFactory = dbFactory;
         _db = _dbFactory.CreateDbContext();
-        
+
+        _businessUnitsRepository = businessUnitsRepository;
+
         _settingsService.PropertyChanged += (sender, args) =>
         {
-            if (args.PropertyName == nameof(_settingsService.Settings))
-            {
-                _logger.LogInformation("Reloading database connection");
-                _db.Dispose();
-                _db = _dbFactory.CreateDbContext();
-            }
+            if (args.PropertyName != nameof(_settingsService.Settings)) return;
+            _logger.LogInformation("Reloading database connection");
+            _db.Dispose();
+            _db = _dbFactory.CreateDbContext();
         };
     }
 
@@ -86,10 +83,7 @@ public partial class AnalysisModeViewModel : ViewModelBase
         {
             case "Business Units":
             {
-                _querying = true;
-                var task = _db.FunAllBusinessUnitsVs.ToListAsync(_cts.Token); //TODO select
-                Data = await task;
-                _querying = false;
+                Data = await _businessUnitsRepository.GetBusinessUnitsAsync();
                 break;
             }
 
