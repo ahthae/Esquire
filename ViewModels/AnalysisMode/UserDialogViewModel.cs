@@ -1,38 +1,32 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using esquire.Data.Fusion;
-using Microsoft.EntityFrameworkCore;
+using esquire.Data;
+using esquire.Services.Repositories;
 
 namespace esquire.ViewModels.AnalysisMode;
 
-public class UserDialogCloseMessage : DialogCloseMessage {}
+public class UserDialogCloseMessage : DialogCloseMessage { }
 public class ConfirmDatabaseUserMessage { }
 
 public partial class UserDialogViewModel : ViewModelBase
 {
-    public class UserDialogUser
-    {
-        public string? Username { get; set; }
-        public string? UserGuid { get; set; }
-        public decimal? UserId { get; set; }
-    }
 
-    private readonly IDbContextFactory<BusinessUnitsContext> _dbFactory;
-    [ObservableProperty] private ObservableCollection<UserDialogUser>? _users;
-    [ObservableProperty] private UserDialogUser? _selectedUser;
+    private readonly IBusinessUnitsRepository _businessUnitsRepository;
+    
+    [ObservableProperty] private List<UserDto>? _users;
+    [ObservableProperty] private UserDto? _selectedUser;
 
-    public UserDialogViewModel(IDbContextFactory<BusinessUnitsContext> dbFactory)
+    public UserDialogViewModel(IBusinessUnitsRepository businessUnitsRepository)
     {
-        _dbFactory = dbFactory;
+        _businessUnitsRepository = businessUnitsRepository;
         
-        SelectedUser = new UserDialogUser()
+        SelectedUser = new UserDto
         {
             Username = "",
             UserGuid = "Loading users please wait",
@@ -48,17 +42,11 @@ public partial class UserDialogViewModel : ViewModelBase
     public void OnCancel() => WeakReferenceMessenger.Default.Send(new UserDialogCloseMessage());
     public Func<string?,CancellationToken,Task<IEnumerable<object>>> PopulateUsers { get; }
 
-    private async Task<IEnumerable<object>> PopulateUsersAsync(string? text, CancellationToken token)
-    {
-        return from user in Users?.Where(user => user.Username?.Contains(text ?? "", StringComparison.OrdinalIgnoreCase) ?? false )
-            select user;
-    }
-
     public async Task UpdateDatabaseUsersAsync()
     {
         try
         {
-            Users = await QueryDatabaseUsersAsync();
+            Users = await _businessUnitsRepository.GetUsersAsync();
             SelectedUser = null;
         }
         catch (Exception ex)
@@ -68,13 +56,9 @@ public partial class UserDialogViewModel : ViewModelBase
         }
     }
 
-    private async Task<ObservableCollection<UserDialogUser>> QueryDatabaseUsersAsync()
+    private async Task<IEnumerable<object>> PopulateUsersAsync(string? text, CancellationToken token)
     {
-        await using BusinessUnitsContext db = _dbFactory.CreateDbContext();
-        var users = db!.PerUsers
-                                   .Where(user => user.ActiveFlag == "Y")
-                                   .Select(u => new UserDialogUser{ Username = u.Username, UserGuid = u.UserGuid, UserId = u.UserId })
-                                   .ToListAsync();
-        return new ObservableCollection<UserDialogUser>(await users);
+        return from user in Users?.Where(user => user.Username?.Contains(text ?? "", StringComparison.OrdinalIgnoreCase) ?? false )
+            select user;
     }
 }

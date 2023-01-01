@@ -1,9 +1,8 @@
-using System;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using esquire.Data;
 using esquire.ViewModels.AnalysisMode;
 using Microsoft.Extensions.Logging;
 
@@ -27,7 +26,7 @@ namespace esquire.Views.AnalysisMode
             SendDataQueryMessage(sender as TreeViewItem);
         }
         private async void NavigationTreeView_DoubleTapWithUser(object? sender, RoutedEventArgs e)
-        {   
+        {
             var dialogVm = Ioc.Default.GetService<UserDialogViewModel>();
             if (dialogVm is null)
             {
@@ -36,16 +35,16 @@ namespace esquire.Views.AnalysisMode
             }
             
             CloseOpenDialog(_dialogIdentifier);
-            decimal? userId = (decimal?)await DialogHost.DialogHost.Show(dialogVm!, _dialogIdentifier);
+            UserDto? user = (UserDto?)await DialogHost.DialogHost.Show(dialogVm, _dialogIdentifier);
             
-            if (userId is not null) SendDataQueryMessage(sender as TreeViewItem, userId);
+            if (user is not null) SendDataQueryMessage(sender as TreeViewItem, user);
         }
 
-        private async void SendDataQueryMessage(HeaderedItemsControl? sender, decimal? userId = null) //TODO more generic way of passing query parameters
+        private async void SendDataQueryMessage(HeaderedItemsControl? sender, UserDto? user = null) //TODO more generic way of passing query parameters
         {
             AnalysisModeViewModel? dataContext = (AnalysisModeViewModel?)DataContext;
             string? queryType = sender?.Header as string;
-            await Task.Run(async () => await dataContext?.RunQueryAsync(queryType, userId));
+            await dataContext?.RunQueryAsync(queryType, user);
         }
 
         private void CloseOpenDialog(string identifier)

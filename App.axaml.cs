@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using esquire.Data.Fusion;
 using esquire.Services;
 using esquire.Services.Export;
+using esquire.Services.Repositories;
 using esquire.Services.Settings;
 using esquire.ViewModels;
 using esquire.ViewModels.AnalysisMode;
@@ -63,9 +64,11 @@ public partial class App : Application
             return new LoggerFactory().AddSerilog(logger);
         });
         services.AddLogging();
+
+        services.AddSingleton<IBusinessUnitsRepository, BusinessUnitsRepository>();
         
         services.AddScoped<IDatabaseService, DatabaseService>();
-        services.AddDbContextFactory<BusinessUnitsContext>(options => {});
+        services.AddDbContextFactory<BusinessUnitsContext>();
 
         Ioc.Default.ConfigureServices(services.BuildServiceProvider());
     }

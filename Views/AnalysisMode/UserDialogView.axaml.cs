@@ -31,7 +31,7 @@ public partial class UserDialogView : UserControl
     private void ConfirmDatabaseUserHandler(object? sender, ConfirmDatabaseUserMessage message)
     {
         var viewModel = DataContext as UserDialogViewModel;
-        Close(viewModel!.SelectedUser?.UserId);
+        Close(viewModel!.SelectedUser);
     }
     
     private async void Visual_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
