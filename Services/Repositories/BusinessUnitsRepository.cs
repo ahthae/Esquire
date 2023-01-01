@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using esquire.Data;
 using esquire.Data.Fusion;
+using esquire.Services.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,22 +21,31 @@ public interface IBusinessUnitsRepository
 public partial class BusinessUnitsRepository : IBusinessUnitsRepository
 {
     private readonly ILogger<BusinessUnitsRepository> _logger;
-    private readonly IServiceScope _scope;
-    private readonly BusinessUnitsContext _context;
+    private readonly IServiceScopeFactory _scopeFactory;
+    private IServiceScope _scope;
+    private BusinessUnitsContext _context;
     
     public BusinessUnitsRepository(ILogger<BusinessUnitsRepository> logger,
+        ISettingsService settingsService,
         IServiceScopeFactory scopeFactory)
     {
         _logger = logger;
-        _scope = scopeFactory.CreateScope();
+        
+        _scopeFactory = scopeFactory;
+        _scope = _scopeFactory.CreateScope();
+        
         _context = _scope.ServiceProvider.GetService<BusinessUnitsContext>();
-//        settingsService.PropertyChanged += (sender, args) =>
-//        {
-//            if (args.PropertyName != nameof(settingsService.Settings)) return;
-//            _logger.LogInformation("Reloading database connection");
-//            _db.Dispose();
-//            _db = _dbFactory.CreateDbContext();
-//        };
+        
+        // Recreate DbContext with new connection settings
+        settingsService.PropertyChanged += (sender, args) =>
+        {
+            if (args.PropertyName != nameof(settingsService.Settings)) return;
+            _logger.LogInformation("Reloading database connection");
+            
+            _scope.Dispose();
+            _scope = _scopeFactory.CreateScope();
+            _context = _scope.ServiceProvider.GetService<BusinessUnitsContext>();
+        };
     }
     
     public async Task<List<BusinessUnitDto>> GetBusinessUnitsAsync()

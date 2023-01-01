@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using esquire.Data;
-using esquire.Data.Fusion;
 using esquire.Services.Export;
 using esquire.Services.Repositories;
-using esquire.Services.Settings;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace esquire.ViewModels.AnalysisMode;
@@ -20,7 +15,6 @@ public partial class AnalysisModeViewModel : ViewModelBase
     private readonly ILogger<AnalysisModeViewModel> _logger;
     private readonly CsvExportService _csvExportService;
 
-    private readonly IServiceScope _dbScope;
     private readonly IBusinessUnitsRepository _businessUnitsRepository;
     
     [ObservableProperty] private IEnumerable? _data;
@@ -63,16 +57,17 @@ public partial class AnalysisModeViewModel : ViewModelBase
 
             case "Business Unit Organizations":
             {
-                if (user is null)
-                {
-                    //TODO
-                }
                 Data = await _businessUnitsRepository.GetBusinessUnitOrganizationsAsync();
                 break;
             }
 
             case "All Business Units for This User":
             {
+                if (user is null)
+                {
+                    _logger.LogError("Failed to query database: User is null");
+                    return;
+                }
                 Data = await _businessUnitsRepository.GetBusinessUnitDataSecurityForUser(user);
                 break;
             }
