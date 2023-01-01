@@ -17,8 +17,8 @@ public interface ISettingsService : INotifyPropertyChanged, INotifyPropertyChang
 
 public record Options
 {
-    public DatabaseOptions Database { get; set; }
-    public LoggingOptions Logging { get; set; }
+    public DatabaseOptions Database { get; set; } = new();
+    public LoggingOptions Logging { get; set; } = new();
 }
 
 public record DatabaseOptions
