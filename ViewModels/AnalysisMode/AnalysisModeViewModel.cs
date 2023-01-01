@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using esquire.Data;
 using esquire.Data.Fusion;
 using esquire.Services.Export;
 using esquire.Services.Repositories;
 using esquire.Services.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace esquire.ViewModels.AnalysisMode;
@@ -17,50 +18,31 @@ namespace esquire.ViewModels.AnalysisMode;
 public partial class AnalysisModeViewModel : ViewModelBase
 {
     private readonly ILogger<AnalysisModeViewModel> _logger;
-    private readonly ISettingsService _settingsService;
     private readonly CsvExportService _csvExportService;
-    
-    private bool _querying;
-    private CancellationTokenSource _cts = new();
-    private BusinessUnitsContext _db;
-    private IDbContextFactory<BusinessUnitsContext> _dbFactory;
 
+    private readonly IServiceScope _dbScope;
     private readonly IBusinessUnitsRepository _businessUnitsRepository;
     
     [ObservableProperty] private IEnumerable? _data;
 
     public AnalysisModeViewModel(ILogger<AnalysisModeViewModel> logger,
-        ISettingsService settingsService,
         CsvExportService csvExportService,
-        IDbContextFactory<BusinessUnitsContext> dbFactory,
-        
         IBusinessUnitsRepository businessUnitsRepository)
     {
         _logger = logger;
-        _settingsService = settingsService;
         _csvExportService = csvExportService;
-        _dbFactory = dbFactory;
-        _db = _dbFactory.CreateDbContext();
 
         _businessUnitsRepository = businessUnitsRepository;
-
-        _settingsService.PropertyChanged += (sender, args) =>
-        {
-            if (args.PropertyName != nameof(_settingsService.Settings)) return;
-            _logger.LogInformation("Reloading database connection");
-            _db.Dispose();
-            _db = _dbFactory.CreateDbContext();
-        };
     }
 
     [RelayCommand]
     public async Task ExportData() => await ExportAsync(Data);
 
-    public async Task RunQueryAsync(string? query, decimal? userId = null)
+    public async Task RunQueryAsync(string? query, UserDto? user)
     {
         try
         {
-            await QueryAsync(query, userId);
+            await QueryAsync(query, user);
         }
         catch (Exception ex)
         {
@@ -69,16 +51,8 @@ public partial class AnalysisModeViewModel : ViewModelBase
         }
     }
 
-    private async Task QueryAsync(string? query, decimal? userId = null)
+    private async Task QueryAsync(string? query, UserDto? user = null)
     {
-        if (_querying)
-        {
-            _cts.Cancel();
-            _querying = false;
-            _logger.LogInformation("Query cancelled");
-            _cts.Dispose();
-            _cts = new CancellationTokenSource();
-        }
         switch (query)
         {
             case "Business Units":
@@ -89,46 +63,17 @@ public partial class AnalysisModeViewModel : ViewModelBase
 
             case "Business Unit Organizations":
             {
-                _querying = true;
-                var task = (from hou in _db.HrOrganizationUnits
-                    join haouf in _db.HrAllOrganizationUnitsFs
-                        on hou.OrganizationId equals haouf.OrganizationId
-                    join houcf in _db.HrOrgUnitClassificationsFs
-                            .Where(i => i.ClassificationCode == "FUN_BUSINESS_UNIT")
-                        on haouf.OrganizationId equals houcf.OrganizationId
-                    select new
-                    {
-                        hou.OrganizationId,
-                        OrgName = hou.Name,
-                        haouf.BusinessGroupId,
-                        hou.DateTo
-                    }).OrderBy(u => u.OrgName).ToListAsync(_cts.Token);
-                Data = await task;
-                _querying = false;
+                if (user is null)
+                {
+                    //TODO
+                }
+                Data = await _businessUnitsRepository.GetBusinessUnitOrganizationsAsync();
                 break;
             }
 
             case "All Business Units for This User":
             {
-                _querying = true;
-                var task = (from fabu in _db.FunAllBusinessUnitsVs
-                        join furda in _db.FunUserRoleDataAsgnmnts.Where(furda => furda.ActiveFlag == "Y")
-                            on fabu.BuId equals furda.OrgId
-                        join pu in _db.PerUsers.Where(pu => pu.ActiveFlag == "Y" && pu.UserId == userId)
-                            on furda.UserGuid equals pu.UserGuid
-                        join arv in _db.AseRoleVls on furda.RoleName equals
-                            arv.Code //TODO arv.Language = userenv('LANG')
-                        select new
-                        {
-                            PERUserName = pu.Username,
-                            furda.RoleName,
-                            BusinessUnit = fabu.BuName
-                        }).Distinct()
-                    .OrderBy(u => u.PERUserName)
-                    .ThenBy(u => u.BusinessUnit)
-                    .ToListAsync(_cts.Token);
-                Data = await task;
-                _querying = false;
+                Data = await _businessUnitsRepository.GetBusinessUnitDataSecurityForUser(user);
                 break;
             }
         }
