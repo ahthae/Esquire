@@ -15,7 +15,7 @@ public interface IBusinessUnitsRepository
 {
     public Task<List<BusinessUnitDto>> GetBusinessUnitsAsync();
     public Task<List<BusinessUnitOrganizationDto>> GetBusinessUnitOrganizationsAsync();
-    public Task<List<BusinessUnitDataSecurityDto>> GetBusinessUnitDataSecurityAsync(UserDto? user);
+    public Task<List<BusinessUnitDataSecurityDto>> GetBusinessUnitDataSecurityAsync(UserDto? user = null);
     public Task<List<PrimaryBusinessUnitDto>> GetPrimaryBusinessUnitsAsync(UserDto? user = null);
     public Task<List<AllBusinessUnitDto>> GetAllBusinessUnitsAsync(UserDto? user = null);
     public Task<List<UserDto>> GetUsersAsync();
