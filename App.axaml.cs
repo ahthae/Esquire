@@ -1,4 +1,3 @@
-using System.Data.Common;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -14,12 +13,10 @@ using esquire.ViewModels.DatabaseMode;
 using esquire.Views;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
-using Serilog.Events;
 
 namespace esquire;
 
@@ -55,9 +52,11 @@ public partial class App : Application
         services.AddTransient<AnalysisModeViewModel>();
         services.AddTransient<UserDialogViewModel>();
 
-        services.AddSingleton<IDialogService>(new DialogService(
-            new DialogManager(viewLocator: new ViewLocator()),
-            viewModelFactory: x => App.Current!.Services.GetService(x)));
+        services.AddSingleton<IDialogService, DialogService>(provider => 
+            new DialogService(
+                new DialogManager(logger: provider.GetService<ILogger<DialogManager>>(), 
+                    viewLocator: new ViewLocatorBase()),
+                    viewModelFactory: provider.GetService));
 
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<CsvExportService>();

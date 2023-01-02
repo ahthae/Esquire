@@ -25,7 +25,6 @@ namespace esquire.Views.AnalysisMode
         {
             string query = ((TreeViewItem?)sender)?.Name;
             var dataContext = (AnalysisModeViewModel?)DataContext;
-            CloseOpenDialog(_userDialogIdentifier);
             switch (query)
             {
                 case "BusinessUnits":
@@ -40,9 +39,7 @@ namespace esquire.Views.AnalysisMode
                     break;
                 case "PrimaryBusinessUnitsForUser":
                 {
-                    var user = (UserDto?) await ShowDialog(Ioc.Default.GetService<UserDialogViewModel>(), _userDialogIdentifier);
-                    if (user is not null)
-                        await dataContext.QueryPrimaryBusinessUnitsAsync(user);
+                    await dataContext.QueryPrimaryBusinessUnitsForUserAsync();
                     break;
                 }
                 
@@ -51,16 +48,7 @@ namespace esquire.Views.AnalysisMode
                     break;
                 case "AllBusinessUnitsForUser":
                 {
-                    await ShowDialog(Ioc.Default.GetService<UserDialogViewModel>(), _userDialogIdentifier)
-                        .ContinueWith(async task =>
-                        {
-                            var user = (UserDto?)await task;
-                            if (user is not null)
-                            {
-                                _logger.LogCritical("{User}", user.Username);
-                                await dataContext.QueryAllBusinessUnitsAsync(user);
-                            }
-                        });
+                    await dataContext.QueryAllBusinessUnitsForUserAsync();
                     break;
                 }
 
@@ -75,34 +63,13 @@ namespace esquire.Views.AnalysisMode
                         await dataContext.QueryBusinessUnitDataSecurityAsync();
                         break;
                 case "BusinessUnitDataSecurityForUser":
-                {
-                    var user = (UserDto?) await ShowDialog(Ioc.Default.GetService<UserDialogViewModel>(), _userDialogIdentifier);
-                    if (user is not null) 
-                        await dataContext.QueryBusinessUnitDataSecurityAsync(user);
+                    await dataContext.QueryBusinessUnitDataSecurityForUserAsync();
                     break;
-                }
                 
                 default:
                     _logger.LogWarning("Query for {query} not found", query);
                     break;
             }
-        }
-
-        private async Task<object?> ShowDialog(ViewModelBase? vm, string identifier)
-        {
-            if (vm is null)
-            {
-                _logger.LogError("Error retrieving data: unable to get dialog content");
-                return null;
-            }
-            CloseOpenDialog(identifier);
-            return await DialogHost.DialogHost.Show(vm, identifier);
-        }
-
-        private static void CloseOpenDialog(string identifier)
-        {
-            var dialog = DialogHost.DialogHost.GetDialogSession(identifier);
-            if (DialogHost.DialogHost.IsDialogOpen(identifier)) dialog?.Close();
         }
     }
 }
