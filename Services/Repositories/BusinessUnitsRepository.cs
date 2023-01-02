@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +15,9 @@ public interface IBusinessUnitsRepository
 {
     public Task<List<BusinessUnitDto>> GetBusinessUnitsAsync();
     public Task<List<BusinessUnitOrganizationDto>> GetBusinessUnitOrganizationsAsync();
-    public Task<List<BusinessUnitDataSecurityDto>> GetBusinessUnitDataSecurityForUser(UserDto user);
+    public Task<List<BusinessUnitDataSecurityDto>> GetBusinessUnitDataSecurityAsync(UserDto? user);
+    public Task<List<PrimaryBusinessUnitDto>> GetPrimaryBusinessUnitsAsync(UserDto? user = null);
+    public Task<List<AllBusinessUnitDto>> GetAllBusinessUnitsAsync(UserDto? user = null);
     public Task<List<UserDto>> GetUsersAsync();
 }
 
@@ -51,6 +54,7 @@ public partial class BusinessUnitsRepository : IBusinessUnitsRepository
     public async Task<List<BusinessUnitDto>> GetBusinessUnitsAsync()
     {
         return await _context.FunAllBusinessUnitsVs
+            .Where(fabuv => fabuv.DateTo == null ? true : fabuv.DateTo >= DateTime.Now)
             .Select(i => new BusinessUnitDto
             {
                 BuId = i.BuId,
@@ -79,10 +83,13 @@ public partial class BusinessUnitsRepository : IBusinessUnitsRepository
     public async Task<List<BusinessUnitOrganizationDto>> GetBusinessUnitOrganizationsAsync()
     {
         return await (from hou in _context.HrOrganizationUnits
+                .Where(hou => hou.DateTo == null ? true : hou.DateTo >= DateTime.Now)
             join haouf in _context.HrAllOrganizationUnitsFs
+                    .Where(haouf => haouf.EffectiveEndDate == null ? true : haouf.EffectiveEndDate >= DateTime.Now)
                 on hou.OrganizationId equals haouf.OrganizationId
             join houcf in _context.HrOrgUnitClassificationsFs
-                    .Where(i => i.ClassificationCode == "FUN_BUSINESS_UNIT")
+                    .Where(houcf => houcf.EffectiveEndDate == null ? true : houcf.EffectiveEndDate >= DateTime.Now)
+                    .Where(houcf => houcf.ClassificationCode == "FUN_BUSINESS_UNIT")
                 on haouf.OrganizationId equals houcf.OrganizationId
             select new BusinessUnitOrganizationDto
             {
@@ -90,27 +97,80 @@ public partial class BusinessUnitsRepository : IBusinessUnitsRepository
                 Name = hou.Name,
                 BusinessGroupId = haouf.BusinessGroupId,
                 DateTo = hou.DateTo
-            }).OrderBy(u => u.Name).ToListAsync();
+            }).Distinct()
+            .OrderBy(u => u.Name).ToListAsync();
     }
 
-    public async Task<List<BusinessUnitDataSecurityDto>> GetBusinessUnitDataSecurityForUser(UserDto user)
+    public async Task<List<PrimaryBusinessUnitDto>> GetPrimaryBusinessUnitsAsync(UserDto? user = null)
+    {
+        return await (from houcf in _context.HrOrgUnitClassificationsFs
+                .Where(houcf => houcf.EffectiveEndDate == null ? true : houcf.EffectiveEndDate >= DateTime.Now)
+                .Where(houcf => houcf.ClassificationCode == "FUN_BUSINESS_UNIT")
+            join haouf in _context.HrAllOrganizationUnitsFs
+                .Where(haouf => haouf.EffectiveEndDate == null ? true : haouf.EffectiveEndDate >= DateTime.Now) on houcf.OrganizationId equals haouf.OrganizationId
+            join hou in _context.HrOrganizationUnits
+                .Where(hou => hou.DateTo == null ? true : hou.DateTo >= DateTime.Now) on haouf.OrganizationId equals hou.OrganizationId
+            join paam in _context.PerAllAssignmentsMs
+                .Where(paam => paam.AssignmentStatusType == "ACTIVE") 
+                .Where(paam => paam.AssignmentType == "E") 
+                .Where(paam => paam.EffectiveLatestChange == "Y") 
+                .Where(paam => paam.PrimaryAssignmentFlag == "Y")
+                .Where(paam => paam.PrimaryFlag == "Y") 
+                .Where(paam => paam.EffectiveEndDate == null ? true : paam.EffectiveEndDate >= DateTime.Now)
+                on hou.OrganizationId equals paam.BusinessUnitId
+            join papf in _context.PerAllPeopleFs
+                .Where(papf => papf.EffectiveEndDate == null ? true : papf.EffectiveEndDate >= DateTime.Now) on paam.PersonId equals papf.PersonId
+            join pu in _context.PerUsers
+                .Where(pu => pu.ActiveFlag == "Y")
+                .Where(pu => user == null ? true : pu.UserId == user.UserId) 
+                .Where(pu => pu.EndDate == null ? true : pu.EndDate >= DateTime.Now)
+                on papf.PersonId equals pu.PersonId
+            select new PrimaryBusinessUnitDto
+            {
+                Username = pu.Username,
+                OrganizationId = hou.OrganizationId,
+                Name = hou.Name,
+            }).Distinct()
+            .OrderBy(i => i.Username)
+            .ThenBy(i => i.Name).ToListAsync();
+    }
+
+    public async Task<List<BusinessUnitDataSecurityDto>> GetBusinessUnitDataSecurityAsync(UserDto? user = null)
     {
         return await (from fabu in _context.FunAllBusinessUnitsVs
-                join furda in _context.FunUserRoleDataAsgnmnts.Where(furda => furda.ActiveFlag == "Y")
+                    .Where(fabu => fabu.DateTo == null ? true : fabu.DateTo >= DateTime.Now)
+                join furda in _context.FunUserRoleDataAsgnmnts
+                            // The entire data set is currently null for this field, but TODO
+//                        .Where(furda => furda.EndDateActive == null ? true : DateTime.Parse(furda.EndDateActive) >= DateTime.Now) 
+                        .Where(furda => furda.ActiveFlag == "Y")
                     on fabu.BuId equals furda.OrgId
-                join pu in _context.PerUsers.Where(pu => pu.ActiveFlag == "Y" && pu.UserId == user.UserId)
+                join pu in _context.PerUsers
+                        .Where(pu => user == null ? true : pu.UserId == user.UserId)
+                        .Where(pu => pu.EndDate == null ? true : pu.EndDate >= DateTime.Now)
+                        .Where(pu => pu.ActiveFlag == "Y") 
                     on furda.UserGuid equals pu.UserGuid
-                join arv in _context.AseRoleVls on furda.RoleName equals
-                    arv.Code //TODO arv.Language = userenv('LANG')
-                select new BusinessUnitDataSecurityDto()
+                join arv in _context.AseRoleVls
+                    .Where(arv => arv.EffectiveEndDate == null ? true : arv.EffectiveEndDate >= DateTime.Now)
+                    on furda.RoleName equals arv.Code //TODO arv.Language = userenv('LANG')
+                select new BusinessUnitDataSecurityDto
                 {
                     Username = pu.Username,
                     RoleName = furda.RoleName,
                     BuName = fabu.BuName
                 }).Distinct()
-            .OrderBy(u => u.Username)
-            .ThenBy(u => u.BuName)
-            .ToListAsync();
+                  .OrderBy(u => u.Username)
+                  .ThenBy(u => u.BuName)
+                  .ThenBy(u => u.RoleName)
+                  .ToListAsync();
+    }
+
+    public async Task<List<AllBusinessUnitDto>> GetAllBusinessUnitsAsync(UserDto? user = null)
+    {
+        return (from pbu in await GetPrimaryBusinessUnitsAsync(user)
+                select new AllBusinessUnitDto { Username = pbu.Username, Name = pbu.Name })
+            .Union(from buds in await GetBusinessUnitDataSecurityAsync(user)
+                select new AllBusinessUnitDto { Username = buds.Username, Name = buds.BuName })
+            .DistinctBy(u => u.Name).ToList();
     }
 
     public async Task<List<UserDto>> GetUsersAsync()

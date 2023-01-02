@@ -34,11 +34,54 @@ namespace esquire.Views.AnalysisMode
                 case "BusinessUnitOrganizations":
                     await dataContext.QueryBusinessUnitOrganizationsAsync();
                     break;
+                
+                case "PrimaryBusinessUnits":
+                    await dataContext.QueryPrimaryBusinessUnitsAsync();
+                    break;
+                case "PrimaryBusinessUnitsForUser":
+                {
+                    var user = (UserDto?) await ShowDialog(Ioc.Default.GetService<UserDialogViewModel>(), _userDialogIdentifier);
+                    if (user is not null)
+                        await dataContext.QueryPrimaryBusinessUnitsAsync(user);
+                    break;
+                }
+                
+                case "AllBusinessUnits":
+                    await dataContext.QueryAllBusinessUnitsAsync();
+                    break;
+                case "AllBusinessUnitsForUser":
+                {
+                    await ShowDialog(Ioc.Default.GetService<UserDialogViewModel>(), _userDialogIdentifier)
+                        .ContinueWith(async task =>
+                        {
+                            var user = (UserDto?)await task;
+                            if (user is not null)
+                            {
+                                _logger.LogCritical("{User}", user.Username);
+                                await dataContext.QueryAllBusinessUnitsAsync(user);
+                            }
+                        });
+                    break;
+                }
+
+                case "BusinessUnitSecurityAse":
+                    break;
+                case "BusinessUnitSecurityAseForRoleCode":
+                    break;
+                case "BusinessUnitSecurityAseForRoleName":
+                    break;
+                
+                case "BusinessUnitDataSecurity":
+                        await dataContext.QueryBusinessUnitDataSecurityAsync();
+                        break;
                 case "BusinessUnitDataSecurityForUser":
+                {
                     var user = (UserDto?) await ShowDialog(Ioc.Default.GetService<UserDialogViewModel>(), _userDialogIdentifier);
                     if (user is not null) 
-                        await dataContext.QueryBusinessUnitDataSecurityForUserAsync(user);
+                        await dataContext.QueryBusinessUnitDataSecurityAsync(user);
                     break;
+                }
+                
                 default:
                     _logger.LogWarning("Query for {query} not found", query);
                     break;

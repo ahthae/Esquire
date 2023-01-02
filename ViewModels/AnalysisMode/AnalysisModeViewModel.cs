@@ -17,7 +17,8 @@ public partial class AnalysisModeViewModel : ViewModelBase
     private readonly CsvExportService _csvExportService;
 
     private readonly IBusinessUnitsRepository _businessUnitsRepository;
-    
+
+    [ObservableProperty] private bool _showDialog;
     [ObservableProperty] private IEnumerable? _data;
 
     public AnalysisModeViewModel(ILogger<AnalysisModeViewModel> logger,
@@ -34,17 +35,22 @@ public partial class AnalysisModeViewModel : ViewModelBase
     public async Task ExportData() => await ExportAsync(Data);
     
     public async Task QueryBusinessUnitsAsync() => 
-        await TryQueryAsync(() => _businessUnitsRepository.GetBusinessUnitsAsync());
+        await TryQueryAsync(async () => await _businessUnitsRepository.GetBusinessUnitsAsync());
     public async Task QueryBusinessUnitOrganizationsAsync() => 
-        await TryQueryAsync(() => _businessUnitsRepository.GetBusinessUnitOrganizationsAsync());
-    public async Task QueryBusinessUnitDataSecurityForUserAsync(UserDto user) => 
-        await TryQueryAsync(() => _businessUnitsRepository.GetBusinessUnitDataSecurityForUser(user));
+        await TryQueryAsync(async () => await _businessUnitsRepository.GetBusinessUnitOrganizationsAsync());
+    public async Task QueryPrimaryBusinessUnitsAsync(UserDto? user = null) => 
+        await TryQueryAsync(async () => await _businessUnitsRepository.GetPrimaryBusinessUnitsAsync(user));
+    public async Task QueryBusinessUnitDataSecurityAsync(UserDto? user = null) => 
+        await TryQueryAsync(async () => await _businessUnitsRepository.GetBusinessUnitDataSecurityAsync(user));
+    public async Task QueryAllBusinessUnitsAsync(UserDto? user = null) => 
+        await TryQueryAsync(async () => await _businessUnitsRepository.GetAllBusinessUnitsAsync(user));
 
     private async Task TryQueryAsync<T>(Func<Task<List<T>>> query)
     {
         try
         {
-            Data = await query();
+            var data = await query();
+            Data = data;
         }
         catch (Exception ex)
         {
@@ -63,6 +69,7 @@ public partial class AnalysisModeViewModel : ViewModelBase
         
         try
         {
+            _logger.LogInformation("Exporting to Export/data.csv");
             await _csvExportService.ExportAsync(data, "Export/data.csv");
         }
         catch (Exception ex)

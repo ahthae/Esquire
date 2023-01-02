@@ -25,8 +25,33 @@
 								<TreeViewItem Name="BusinessUnitOrganizations"
 								              Header="Business Unit Organizations"
 								              DoubleTapped="NavigationTreeView_DoubleTap"/>
-								<TreeViewItem Name="BusinessUnitsForUser"
-								              Header="All Business Units for this User"
+								
+								<TreeViewItem Name="PrimaryBusinessUnits"
+								              Header="Primary Business Units for all Users"
+								              DoubleTapped="NavigationTreeView_DoubleTap"/>
+								<TreeViewItem Name="PrimaryBusinessUnitsForUser"
+								              Header="Primary Business Units for this User"
+								              DoubleTapped="NavigationTreeView_DoubleTap"/>
+								
+								<TreeViewItem Name="AllBusinessUnits"
+								              Header="All Business Units for all Users" 
+								              DoubleTapped="NavigationTreeView_DoubleTap"/>
+								<TreeViewItem Name="AllBusinessUnitsForUser"
+								              Header="All Business Units for this Users" 
+								              DoubleTapped="NavigationTreeView_DoubleTap"/>
+								
+								<TreeViewItem Name="BusinessUnitDataSecurityAse"
+								              Header="Business Unit Data Security for all Job Roles (ASE)" 
+								              DoubleTapped="NavigationTreeView_DoubleTap"/>
+								<TreeViewItem Name="BusinessUnitDataSecurityAseForRoleCode"
+								              Header="Business Unit Data Security for this Job Role Code (ASE)" 
+								              DoubleTapped="NavigationTreeView_DoubleTap"/>
+								<TreeViewItem Name="BusinessUnitDataSecurityAseForRoleName"
+								              Header="Business Unit Data Security for this Job Role Name (ASE)" 
+								              DoubleTapped="NavigationTreeView_DoubleTap"/>
+								
+								<TreeViewItem Name="BusinessUnitDataSecurity"
+								              Header="Business Unit Data Security for all Users" 
 								              DoubleTapped="NavigationTreeView_DoubleTap"/>
 								<TreeViewItem Name="BusinessUnitDataSecurityForUser"
 								              Header="Business Unit Data Security for this User" 
@@ -37,6 +62,7 @@
 					<GridSplitter Grid.Column="1"/>
 					<dialogHost:DialogHost Identifier="QueryDialog" 
 					                       DialogContent="{Binding Dialog}"
+					                       IsOpen="{Binding ShowDialog}"
 					                       Grid.Column="2">
 						<DockPanel>
 							<Panel DockPanel.Dock="Top">
