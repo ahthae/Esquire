@@ -1,4 +1,3 @@
-using System;
 using System.Data.Common;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -7,13 +6,20 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using esquire.Data.Fusion;
 using esquire.Services;
 using esquire.Services.Export;
+using esquire.Services.Repositories;
 using esquire.Services.Settings;
 using esquire.ViewModels;
+using esquire.ViewModels.AnalysisMode;
+using esquire.ViewModels.DatabaseMode;
 using esquire.Views;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace esquire;
 
@@ -36,19 +42,18 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
     
-    public static App? Current => (App?)Application.Current;
-    
-    public IServiceProvider Services { get; private set; }
+    public new static App? Current => (App?)Application.Current;
 
-    public void ConfigureServices()
+    private void ConfigureServices()
     {
         var services = new ServiceCollection();
 
-        services.AddTransient<DatabaseSettingsDialogViewModel>();
         services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<LogViewModel>();
+        services.AddTransient<DatabaseSettingsDialogViewModel>();
         services.AddTransient<DatabaseModeViewModel>();
         services.AddTransient<AnalysisModeViewModel>();
-        services.AddTransient<AnalysisModeUserDialogViewModel>();
+        services.AddTransient<UserDialogViewModel>();
 
         services.AddSingleton<IDialogService>(new DialogService(
             new DialogManager(viewLocator: new ViewLocator()),
@@ -56,15 +61,21 @@ public partial class App : Application
 
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<CsvExportService>();
+        services.AddSingleton<ILoggerFactory>(provider =>
+        {
+            ISettingsService settings = provider.GetRequiredService<ISettingsService>();
+            Logger logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(settings.Config)
+                .CreateLogger();
+            return new LoggerFactory().AddSerilog(logger);
+        });
+        services.AddLogging();
+
+        services.AddSingleton<IBusinessUnitsRepository, BusinessUnitsRepository>();
         
         services.AddScoped<IDatabaseService, DatabaseService>();
-        services.AddDbContext<FusionContext>((serviceProvider, options) => {
-            IDatabaseService db = serviceProvider.GetService<IDatabaseService>();
-            DbConnection connection = db.GetConnection();
-            Console.WriteLine(connection.ConnectionString);
-            options.UseOracle(connection);
-        }, ServiceLifetime.Transient);
+        services.AddDbContextFactory<BusinessUnitsContext>();
 
-        Services = services.BuildServiceProvider();
+        Ioc.Default.ConfigureServices(services.BuildServiceProvider());
     }
 }

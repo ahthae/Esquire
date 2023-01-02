@@ -6,64 +6,118 @@ using Microsoft.Extensions.Configuration;
 
 namespace esquire.Services.Settings;
 
-public class SettingsService : ObservableObject, ISettingsService
+public partial class SettingsService : ObservableObject, ISettingsService
 {
     private const string ConfigDirectory = "Config";
     private const string ConfigurationFile = "appsettings.json";
-    private Options _settings = new();
-    private bool _wasInitialized = false;
+    private const string LogConfigurationFile = "logsettings.json";
+    
+    [ObservableProperty] private IConfiguration _config;
+    [ObservableProperty] private bool _wasInitialized = false;
+
+    [ObservableProperty] private Options _settings = new() 
+    {
+            Database = new DatabaseOptions()
+            {
+                Provider = DatabaseOptions.ProviderType.Oracle,
+                UserId = "SYSETM",
+                Password = "",
+                DataSource = "XEPDB1"
+            },
+            Logging = new LoggingOptions() 
+            { 
+                LogLevel = 
+                new LoggingOptions.LogLevelOptions()
+                {
+                    Default = "Debug", 
+                    Microsoft = "Information", 
+                    System = "Information"
+                }
+                
+            }
+    };
 
     public SettingsService()
     {
-        CheckAndCreateConfigPath();
-        IConfiguration config = new ConfigurationBuilder()
+        CreateDirectory(GetConfigPath());
+        CreateDirectory(GetLogConfigPath());
+        
+        if (!CheckFile(GetConfigPath()))
+        {
+            Console.WriteLine($"Creating new config file at {Path.GetFullPath(GetLogConfigPath())}"); 
+            WriteOptions(Settings);
+            WasInitialized = true;
+        }
+        if (!CheckFile(GetLogConfigPath()))
+        {
+            Console.WriteLine($"Creating new logger config file at {Path.GetFullPath(GetLogConfigPath())}"); 
+            WriteDefaultLogOptions();
+        }
+        
+        Config = new ConfigurationBuilder()
             .AddJsonFile(GetConfigPath(), false, true)
+            .AddJsonFile(GetLogConfigPath(), false, true)
             .Build();
-        Settings = config.Get<Options>();
-    }
-
-    public bool WasInitialized
-    {
-        get => _wasInitialized;
-        set => SetProperty(ref _wasInitialized, value);
-    }
-    
-    public Options Settings 
-    { 
-        get => _settings;
-        set => SetProperty(ref _settings, value); 
+        
+        Settings = _config.Get<Options>();
     }
 
     public void Write()
     {
-        CheckAndCreateConfigPath();
-        WriteSettings();
+        CreateDirectory(GetConfigPath());
+        WriteOptions(Settings);
     }
 
-    // Checks whether the config file path exists and creates it if it doesn't
-    private void CheckAndCreateConfigPath()
+    public string GetLogConfigPath()
     {
-        string configPath = GetConfigPath();
-        if (!(new DirectoryInfo(ConfigDirectory).Exists))
-        {
-            Console.WriteLine($"Creating new Config directory at {Path.GetFullPath(configPath)}");
-            Directory.CreateDirectory(ConfigDirectory);
-        }
-        if (!(new FileInfo(configPath).Exists))
-        {
-            Console.WriteLine($"Creating new config file at {Path.GetFullPath(configPath)}");
-            WriteSettings();
-            WasInitialized = true;
-        }
+        return Path.Join(ConfigDirectory, LogConfigurationFile);
     }
-
-    private void WriteSettings()
-    {
-        File.WriteAllText(GetConfigPath(), JsonSerializer.Serialize(Settings));
-    }
-    
-    private static string GetConfigPath()
+    public string GetConfigPath()
     {
         return Path.Join(ConfigDirectory, ConfigurationFile);
     }
+
+    private void WriteOptions(Options settings)
+    {
+        File.WriteAllText(GetConfigPath(), JsonSerializer.Serialize(settings));
+    }
+    private void WriteDefaultLogOptions()
+    {
+        File.WriteAllText(GetLogConfigPath(), DefaultLogSettings);
+    }
+
+    private bool CheckFile(string path)
+    {
+        return new FileInfo(path).Exists;
+    }
+    
+    // Checks whether the config directory exists and creates it if it doesn't
+    private void CreateDirectory(string path)
+    {
+        string? directory = Path.GetDirectoryName(path);
+        
+        if (new DirectoryInfo(directory).Exists) return;
+        
+        Console.WriteLine("Creating new directory at {Path}", Path.GetFullPath(path));
+    }
+
+    private static readonly string DefaultLogSettings = @"{
+      ""Serilog"": {
+        ""WriteTo"" : [ ""Console"" ],
+        ""WriteTo:Async"": {
+          ""Name"": ""Async"",
+          ""Args"": {
+            ""configure"": [
+              {
+                ""Name"": ""File"",
+                ""Args"": {
+                  ""path"": ""Logs/current.log"",
+                  ""outputTemplate"": ""{Timestamp:o} [{Level:u3}] ({Application}/{MachineName}/{ThreadId}) {Message}{NewLine}{Exception}""
+                }
+              }
+            ]
+          }
+        }
+      }
+    }";
 }

@@ -14,5 +14,19 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 	
-	<ContentControl Content="{Binding Page}"/>
+	<DockPanel>
+		
+		<Menu DockPanel.Dock="Top">
+			<MenuItem Header="_Edit">
+				<MenuItem Header="_Database" Command="{Binding ShowDatabaseSettingsDialog}"/>
+			</MenuItem>
+		</Menu>
+		
+		<Panel DockPanel.Dock="Bottom">
+			<ContentControl Content="{Binding Log}"/>
+		</Panel>
+		
+		<ContentControl Content="{Binding Page}"/>
+		
+	</DockPanel>
 </Window>

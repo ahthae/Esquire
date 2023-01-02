@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="esquire.Views.DatabaseSettingsDialogView"
         Title="Database Settings"
-        Topmost="True">
+        ZIndex="5">
      
 	<Design.DataContext>
 		<viewModels:DatabaseSettingsDialogViewModel/>
@@ -27,17 +27,11 @@
         <TextBlock DockPanel.Dock="Bottom" Text="{Binding ConnectionTestResult}"/>
         
         <StackPanel>
-            <Grid ShowGridLines="False" VerticalAlignment="Bottom">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="2*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                
+            <Grid VerticalAlignment="Bottom"
+                  ShowGridLines="False" 
+                  RowDefinitions="Auto,Auto,Auto"
+                  ColumnDefinitions="*,2*">
+
                 <Grid.Styles>
                     <Style Selector="TextBlock">
                         <Setter Property="HorizontalAlignment" Value="Center"/>

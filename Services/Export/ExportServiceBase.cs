@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading.Tasks;
 using esquire.Services.Settings;
 
 namespace esquire.Services.Export;
@@ -9,5 +10,5 @@ public abstract class ExportServiceBase : IExportService
 
     public ExportServiceBase(ISettingsService settingsService) => _settingsService = settingsService;
 
-    public abstract void Export(IEnumerable data, string fileName);
+    public abstract Task ExportAsync(IEnumerable data, string fileName);
 }

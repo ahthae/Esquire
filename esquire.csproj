@@ -43,16 +43,32 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.8" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.80" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\Fusion\Generated" />
+    <Folder Include="Models\Compiled\BusinessUnits" />
     <Folder Include="Models\Generated" />
+    <Folder Include="Views\DatabaseMode" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Views\DatabaseSettingsDialogView.axaml.cs">
       <DependentUpon>SignonWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\AnalysisMode\UserDialogView.axaml.cs">
+      <DependentUpon>AnalysisModeUserDialogView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\AnalysisMode\AnalysisModeView.axaml.cs">
+      <DependentUpon>AnalysisModeView.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

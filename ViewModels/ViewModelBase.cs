@@ -15,8 +15,14 @@ public class OpenDialogMessage<T, R> where T : ViewModelBase { }
 
 public abstract class ViewModelBase : ObservableRecipient
 {
-    protected void OpenDialog<T>() where T : ViewModelBase
+    
+    protected static void OpenDialog<T>() where T : ViewModelBase
     {
         WeakReferenceMessenger.Default.Send(new OpenDialogMessage(typeof(T)));
+    }
+
+    protected static void Log(string message)
+    {
+        WeakReferenceMessenger.Default.Send(new LogMessage(message));
     }
 }

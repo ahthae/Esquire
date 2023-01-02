@@ -1,8 +1,4 @@
-﻿using esquire.Models;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using esquire.Services;
+﻿using System.Data.Common;
 using esquire.Services.Settings;
 using Oracle.ManagedDataAccess.Client;
 
@@ -10,31 +6,38 @@ namespace esquire.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        private readonly ISettingsService _settings;
+        private readonly ISettingsService _settingsService;
 
-        public DatabaseService(ISettingsService settings)
+        public DatabaseService(ISettingsService settingsService)
         {
-            _settings = settings;
-            Factory = DbProviderFactories.GetFactory(GetProvider(settings.Settings.Database.Provider));
+            _settingsService = settingsService;
+            Factory = DbProviderFactories.GetFactory(GetProvider(_settingsService.Settings.Database.Provider));
         }
 
         private DbProviderFactory? Factory { get; init; }
 
-        public DbConnection? GetConnection()
+        public string CreateConnectionString() => CreateConnectionString(_settingsService.Settings);
+        public string CreateConnectionString(Options settings)
+        {
+            DbConnectionStringBuilder? connectionStringBuilder = Factory.CreateConnectionStringBuilder();
+            connectionStringBuilder.Add("User Id", settings.Database.UserId);
+            connectionStringBuilder.Add("Password", settings.Database.Password);
+            connectionStringBuilder.Add("Data Source", settings.Database.DataSource);
+            return connectionStringBuilder.ToString();
+        }
+
+        public DbConnection? GetConnection() => GetConnection(_settingsService.Settings);
+        public DbConnection? GetConnection(Options settings)
         {
             DbConnection? connection = Factory.CreateConnection();
-            DbConnectionStringBuilder? connectionStringBuilder = Factory.CreateConnectionStringBuilder();
-            connectionStringBuilder.Add("User Id", _settings.Settings.Database.UserId);
-            connectionStringBuilder.Add("Password", _settings.Settings.Database.Password);
-            connectionStringBuilder.Add("Data Source", _settings.Settings.Database.DataSource);
-            connection.ConnectionString = connectionStringBuilder.ToString();
+            connection.ConnectionString = CreateConnectionString(settings);
             return connection;
         }
 
-        private static DbConnection GetProvider(Settings.Options.DatabaseOptions.ProviderType settingsProviderType) =>
+        private static DbConnection GetProvider(DatabaseOptions.ProviderType settingsProviderType) =>
             settingsProviderType switch
             {
-                Settings.Options.DatabaseOptions.ProviderType.Oracle => new OracleConnection()
+                DatabaseOptions.ProviderType.Oracle => new OracleConnection()
             };
     }
 }

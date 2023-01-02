@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using esquire.Services.Settings;
@@ -20,12 +21,11 @@ public class CsvExportService : ExportServiceBase
         };
     }
 
-    public override void Export(IEnumerable data, string exportPath)
+    public override async Task ExportAsync(IEnumerable data, string exportPath)
     {
-        using (StreamWriter writer = new StreamWriter(exportPath))
-        using (CsvWriter csv = new CsvWriter(writer, _configuration))
-        {
-            csv.WriteRecordsAsync(data);
-        }
+        await using StreamWriter writer = new StreamWriter(exportPath);
+        await using CsvWriter csv = new CsvWriter(writer, _configuration);
+        
+        await csv.WriteRecordsAsync(data);
     }
 }

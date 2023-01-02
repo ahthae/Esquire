@@ -1,29 +1,37 @@
-﻿using System;
-using CommunityToolkit.Mvvm.Messaging;
-using esquire.Services;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using esquire.Services.Settings;
-using Microsoft.Extensions.DependencyInjection;
+using esquire.ViewModels.AnalysisMode;
+using esquire.ViewModels.DatabaseMode;
+using Microsoft.Extensions.Logging;
 
 namespace esquire.ViewModels;
 
-public class ShowDatabaseSettingsDialogMessage{}
-
-public class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase
 {
-    private ViewModelBase page;
+    private readonly ILogger<MainWindowViewModel> _logger;
+    private readonly AnalysisModeViewModel _analysisMode;
+    private readonly DatabaseModeViewModel _databaseMode;
+    [ObservableProperty] private ViewModelBase _page;
+    [ObservableProperty] private ViewModelBase _log;
 
-    public MainWindowViewModel(IServiceProvider serviceProvider)
+    public MainWindowViewModel(ILogger<MainWindowViewModel> logger,
+        ISettingsService settings,
+        LogViewModel logViewModel,
+        AnalysisModeViewModel analysisModeViewModel,
+        DatabaseModeViewModel databaseModeViewModel)
     {
-        Page = new AnalysisModeViewModel(serviceProvider);
-        if (serviceProvider.GetService<ISettingsService>().WasInitialized)
-            WeakReferenceMessenger.Default.Send<ShowDatabaseSettingsDialogMessage>();
+        _logger = logger;
+
+        _log = logViewModel;
+        _analysisMode = analysisModeViewModel;
+        _databaseMode = databaseModeViewModel;
+        Page = _analysisMode;
+
+        if (settings.WasInitialized)
+            ShowDatabaseSettingsDialog();
     }
     
-    
-
-    public ViewModelBase Page
-    {
-        get => page;
-        set => SetProperty(ref page, value);
-    }
+    [RelayCommand]
+    public void ShowDatabaseSettingsDialog() => OpenDialog<DatabaseSettingsDialogViewModel>();
 }
