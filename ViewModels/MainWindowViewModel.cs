@@ -9,7 +9,7 @@ namespace esquire.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<MainWindowViewModel> _logger;
     private readonly AnalysisModeViewModel _analysisMode;
     private readonly DatabaseModeViewModel _databaseMode;
     [ObservableProperty] private ViewModelBase _page;
