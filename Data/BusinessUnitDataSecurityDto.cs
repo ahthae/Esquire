@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace esquire.Data;
 
-public class BusinessUnitDataSecurityDto
+public class BusinessUnitDataSecurityDto : IDto
 {
     [DisplayName("PER User Name")]
     public string? Username { get; set; }

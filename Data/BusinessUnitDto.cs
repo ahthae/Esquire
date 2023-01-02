@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace esquire.Data;
 
-public class BusinessUnitDto
+public class BusinessUnitDto : IDto
 {
     [DisplayName("Business Unit ID.")] public decimal? BuId { get; set; }
     [DisplayName("Business Unit Name")] public string? BuName { get; set; }

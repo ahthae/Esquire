@@ -1,6 +1,6 @@
 namespace esquire.Data;
 
-public class UserDto
+public class UserDto : IDto
 {
     public string? Username { get; set; }
     public string? UserGuid { get; set; }
