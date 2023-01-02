@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -31,46 +32,24 @@ public partial class AnalysisModeViewModel : ViewModelBase
 
     [RelayCommand]
     public async Task ExportData() => await ExportAsync(Data);
+    
+    public async Task QueryBusinessUnitsAsync() => 
+        await TryQueryAsync(() => _businessUnitsRepository.GetBusinessUnitsAsync());
+    public async Task QueryBusinessUnitOrganizationsAsync() => 
+        await TryQueryAsync(() => _businessUnitsRepository.GetBusinessUnitOrganizationsAsync());
+    public async Task QueryBusinessUnitDataSecurityForUserAsync(UserDto user) => 
+        await TryQueryAsync(() => _businessUnitsRepository.GetBusinessUnitDataSecurityForUser(user));
 
-    public async Task RunQueryAsync(string? query, UserDto? user)
+    private async Task TryQueryAsync<T>(Func<Task<List<T>>> query)
     {
         try
         {
-            await QueryAsync(query, user);
+            Data = await query();
         }
         catch (Exception ex)
         {
             _logger.LogError("Failed to query database: {Message}", ex.Message);
             Log($"Failed to query database: {ex.Message}");
-        }
-    }
-
-    private async Task QueryAsync(string? query, UserDto? user = null)
-    {
-        switch (query)
-        {
-            case "Business Units":
-            {
-                Data = await _businessUnitsRepository.GetBusinessUnitsAsync();
-                break;
-            }
-
-            case "Business Unit Organizations":
-            {
-                Data = await _businessUnitsRepository.GetBusinessUnitOrganizationsAsync();
-                break;
-            }
-
-            case "All Business Units for This User":
-            {
-                if (user is null)
-                {
-                    _logger.LogError("Failed to query database: User is null");
-                    return;
-                }
-                Data = await _businessUnitsRepository.GetBusinessUnitDataSecurityForUser(user);
-                break;
-            }
         }
     }
     

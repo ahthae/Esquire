@@ -1,8 +1,9 @@
+using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using esquire.Data;
+using esquire.ViewModels;
 using esquire.ViewModels.AnalysisMode;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +12,7 @@ namespace esquire.Views.AnalysisMode
     public partial class AnalysisModeView : UserControl
     {
         private ILogger<AnalysisModeView> _logger;
-        private readonly string _dialogIdentifier = "QueryDialog";
+        private readonly string _userDialogIdentifier = "QueryDialog";
         
         public AnalysisModeView()
         {
@@ -19,35 +20,43 @@ namespace esquire.Views.AnalysisMode
             
             InitializeComponent();
         }
-
-        private void NavigationTreeView_DoubleTap(object? sender, RoutedEventArgs e)
-        { 
-            CloseOpenDialog(_dialogIdentifier);
-            SendDataQueryMessage(sender as TreeViewItem);
-        }
-        private async void NavigationTreeView_DoubleTapWithUser(object? sender, RoutedEventArgs e)
+        
+        private async void NavigationTreeView_DoubleTap(object? sender, RoutedEventArgs e)
         {
-            var dialogVm = Ioc.Default.GetService<UserDialogViewModel>();
-            if (dialogVm is null)
+            string query = ((TreeViewItem?)sender)?.Name;
+            var dataContext = (AnalysisModeViewModel?)DataContext;
+            CloseOpenDialog(_userDialogIdentifier);
+            switch (query)
+            {
+                case "BusinessUnits":
+                    await dataContext.QueryBusinessUnitsAsync();
+                    break;
+                case "BusinessUnitOrganizations":
+                    await dataContext.QueryBusinessUnitOrganizationsAsync();
+                    break;
+                case "BusinessUnitDataSecurityForUser":
+                    var user = (UserDto?) await ShowDialog(Ioc.Default.GetService<UserDialogViewModel>(), _userDialogIdentifier);
+                    if (user is not null) 
+                        await dataContext.QueryBusinessUnitDataSecurityForUserAsync(user);
+                    break;
+                default:
+                    _logger.LogWarning("Query for {query} not found", query);
+                    break;
+            }
+        }
+
+        private async Task<object?> ShowDialog(ViewModelBase? vm, string identifier)
+        {
+            if (vm is null)
             {
                 _logger.LogError("Error retrieving data: unable to get dialog content");
-                return;
+                return null;
             }
-            
-            CloseOpenDialog(_dialogIdentifier);
-            UserDto? user = (UserDto?)await DialogHost.DialogHost.Show(dialogVm, _dialogIdentifier);
-            
-            if (user is not null) SendDataQueryMessage(sender as TreeViewItem, user);
+            CloseOpenDialog(identifier);
+            return await DialogHost.DialogHost.Show(vm, identifier);
         }
 
-        private async void SendDataQueryMessage(HeaderedItemsControl? sender, UserDto? user = null) //TODO more generic way of passing query parameters
-        {
-            AnalysisModeViewModel? dataContext = (AnalysisModeViewModel?)DataContext;
-            string? queryType = sender?.Header as string;
-            await dataContext?.RunQueryAsync(queryType, user);
-        }
-
-        private void CloseOpenDialog(string identifier)
+        private static void CloseOpenDialog(string identifier)
         {
             var dialog = DialogHost.DialogHost.GetDialogSession(identifier);
             if (DialogHost.DialogHost.IsDialogOpen(identifier)) dialog?.Close();
