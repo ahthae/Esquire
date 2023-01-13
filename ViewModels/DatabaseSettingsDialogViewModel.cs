@@ -14,6 +14,8 @@ namespace esquire.ViewModels;
 
 public class DatabaseSettingsDialogCloseMessage : DialogCloseMessage { }
 
+//TODO use MvvmDialogs
+
 public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
 {
     private readonly ILogger<DatabaseSettingsDialogViewModel> _logger;
