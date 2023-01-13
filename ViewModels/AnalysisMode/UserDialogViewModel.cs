@@ -7,18 +7,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using esquire.Data;
 using esquire.Services.Repositories;
-using HanumanInstitute.MvvmDialogs;
 
 namespace esquire.ViewModels.AnalysisMode;
 
-public partial class UserDialogViewModel : ViewModelBase, IModalDialogViewModel, ICloseable
+public partial class UserDialogViewModel : DialogViewModelBase
 {
-
     private readonly IBusinessUnitsRepository _businessUnitsRepository;
     
     [ObservableProperty] private List<UserDto>? _users;
     [ObservableProperty] private UserDto? _selectedUser;
-    [ObservableProperty] private bool? _dialogResult;
 
     public UserDialogViewModel(IBusinessUnitsRepository businessUnitsRepository)
     {
@@ -33,20 +30,18 @@ public partial class UserDialogViewModel : ViewModelBase, IModalDialogViewModel,
 
         PopulateUsers = PopulateUsersAsync;
     }
-
-    public event EventHandler? RequestClose;
     
     [RelayCommand]
     public void OnConfirm()
     {
         DialogResult = true;
-        RequestClose?.Invoke(this, EventArgs.Empty);
+        RaiseCloseEvent();
     }
     [RelayCommand]
     public void OnCancel()
     {
         DialogResult = false;
-        RequestClose?.Invoke(this, EventArgs.Empty);
+        RaiseCloseEvent();
     }
 
     public Func<string?,CancellationToken,Task<IEnumerable<object>>> PopulateUsers { get; }

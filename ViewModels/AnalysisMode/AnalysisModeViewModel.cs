@@ -66,16 +66,21 @@ public partial class AnalysisModeViewModel : ViewModelBase
         catch (Exception ex)
         {
             _logger.LogError("Failed to query database: {Message}", ex.Message);
-            Log($"Failed to query database: {ex.Message}");
+            SendLogMessage($"Failed to query database: {ex.Message}");
         }
     }
     
     private async Task<UserDto?> ShowUserDialogAsync()
     {
         var dialog = _dialogService.CreateViewModel<UserDialogViewModel>();
-        var mainWindowViewModel = (MainWindowViewModel)_dialogService.DialogManager.GetMainWindow().DataContext; //TODO find a better way to get the owning window
-        var result = await _dialogService.ShowDialogAsync(mainWindowViewModel, dialog);
+        var result = await ShowDialogAsync(dialog);
         return result == true ? dialog.SelectedUser : null;
+    }
+
+    private async Task<bool?> ShowDialogAsync(DialogViewModelBase dialog)
+    {
+        var mainWindowViewModel = (MainWindowViewModel)_dialogService.DialogManager.GetMainWindow().DataContext; //TODO find a better way to get the owning window
+        return await _dialogService.ShowDialogAsync(mainWindowViewModel, dialog);
     }
     
     private async Task ExportAsync(IEnumerable? data) //TODO decouple from export implementation
@@ -94,7 +99,7 @@ public partial class AnalysisModeViewModel : ViewModelBase
         catch (Exception ex)
         {
             _logger.LogError("Export error: {Exception}: {Message}", ex.GetType(), ex.Message);
-            Log($"Export error: {ex.GetType()}: {ex.Message}");
+            SendLogMessage($"Export error: {ex.GetType()}: {ex.Message}");
         }
     }
 }

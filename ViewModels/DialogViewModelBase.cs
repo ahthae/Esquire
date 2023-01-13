@@ -1,14 +1,17 @@
-using CommunityToolkit.Mvvm.Messaging.Messages;
+using CommunityToolkit.Mvvm.ComponentModel;
+using HanumanInstitute.MvvmDialogs;
+using System;
 
 namespace esquire.ViewModels;
 
-public class DialogCloseMessage { }
-public class DialogCloseRequestMessage<T> : RequestMessage<T>  { }
-public class DialogCloseCollectionRequestMessage<T> : CollectionRequestMessage<T>  { }
-public class AsyncDialogCloseRequestMessage<T> : AsyncRequestMessage<T> { }
-public class AsyncDialogCloseCollectionRequestMessage<T> : AsyncCollectionRequestMessage<T> { }
-
-public abstract class DialogViewModelBase : ViewModelBase
+public abstract partial class DialogViewModelBase : ViewModelBase, IModalDialogViewModel, ICloseable
 {
-    protected abstract void SendCloseMessage();
+    [ObservableProperty] private bool? _dialogResult;
+
+    public event EventHandler? RequestClose;
+
+    protected void RaiseCloseEvent()
+    {
+        RequestClose?.Invoke(this, EventArgs.Empty);
+    }
 }

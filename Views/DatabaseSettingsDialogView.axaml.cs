@@ -1,16 +1,13 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using CommunityToolkit.Mvvm.Messaging;
-using esquire.ViewModels;
 
 namespace esquire.Views;
 
-public partial class DatabaseSettingsDialogView : DialogBase<DatabaseSettingsDialogViewModel>
+public partial class DatabaseSettingsDialogView : Window
 {
     public DatabaseSettingsDialogView()
-    {
-        WeakReferenceMessenger.Default.Register<DatabaseSettingsDialogCloseMessage>(this, DialogCloseMessageHandler);
-        
+    {   
         InitializeComponent();
 #if DEBUG
         this.AttachDevTools();

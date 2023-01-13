@@ -4,15 +4,12 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using esquire.Services;
 using esquire.Services.Settings;
 using Microsoft.Extensions.Logging;
 using Options = esquire.Services.Settings.Options;
 
 namespace esquire.ViewModels;
-
-public class DatabaseSettingsDialogCloseMessage : DialogCloseMessage { }
 
 public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
 {
@@ -36,13 +33,15 @@ public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
     public void OnConfirm()
     {
         SaveSettings();
-        SendCloseMessage();
+        RaiseCloseEvent();
     }
+
     [RelayCommand]
     public void OnCancel()
     {
-        SendCloseMessage();
+        RaiseCloseEvent();
     }
+
     [RelayCommand]
     public async Task<bool> OnTestConnection()
     {
@@ -73,10 +72,5 @@ public partial class DatabaseSettingsDialogViewModel : DialogViewModelBase
         _settingsService.Settings = Settings;
         _settingsService.Write();
         _logger.LogInformation("Settings saved.");
-    }
-
-    protected override void SendCloseMessage()
-    {
-        WeakReferenceMessenger.Default.Send<DatabaseSettingsDialogCloseMessage>();
     }
 }
